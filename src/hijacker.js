@@ -18,7 +18,7 @@ define(['src/utils'], function(utils) {
         if (xhr.url !== this.url) { return; }
 
         for (var ctr = 0; ctr < eventCallbacks.length; ctr++) {
-            eventCallbacks[ctr].apply(this, [xhr]);
+            eventCallbacks[ctr].call(this, xhr);
         }
     };
 

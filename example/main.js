@@ -3,7 +3,7 @@ require.config({
     paths: {
         'utils': 'src/utils',
 
-        'jquery': 'example/jquery-1.11.1'
+        'jquery': 'bower_components/jquery/dist/jquery'
     },
     shim: {
         'jquery': {
@@ -19,10 +19,7 @@ define(['src/hijax', 'jquery'], function(hiJax, $) {
     var hijacker = hiJax
         .proxy('home', '/')
         .receive(function(xhr) {
-            console.info('This is proxies before the AJAX handler');
-        })
-        .complete(function(xhr) {
-            console.info('This is proxies after the AJAX handler');
+            console.info('This is proxied before the AJAX handler');
         });
 
     $.get('/', function() {

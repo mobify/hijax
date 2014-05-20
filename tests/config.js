@@ -2,7 +2,8 @@ require.config({
     baseUrl: '../',
     paths: {
         'chai': 'node_modules/chai/chai',
-        'mocha': 'node_modules/mocha/mocha'
+        'mocha': 'node_modules/mocha/mocha',
+        'jquery': 'bower_components/jquery/dist/jquery'
     },
     'shim': {
         'mocha': {
@@ -10,6 +11,9 @@ require.config({
                 this.mocha.setup('bdd');
                 return this.mocha;
             }
+        },
+        'jquery': {
+            exports: 'jQuery'
         }
     }
 });

@@ -11,7 +11,6 @@
         "jshint": "2.5.0",
         "grunt-jscs-checker": "0.4.1",
         "mobify-code-style": "0.0.3",
-        "grunt-contrib-connect": "~0.6.0",
-        "sinon": "1.9.1"
+        "grunt-contrib-connect": "~0.6.0"
     }
 }
