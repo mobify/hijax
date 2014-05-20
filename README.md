@@ -1,1 +1,1 @@
-# Smuggler XHR Proxy
+# Hijax XHR Proxy

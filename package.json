@@ -1,5 +1,5 @@
 {
-    "name": "smuggler",
+    "name": "hijax",
     "version": "0.0.1",
     "dependencies": {
         "connect": "2.3.4",
