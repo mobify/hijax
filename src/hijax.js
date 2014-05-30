@@ -2,7 +2,7 @@ define([
     'src/utils',
     'src/hijacker'
 ],
-function(utils, Smuggler) {
+function(utils, Hijacker) {
     if (window.hijax) { return window.hijax; }
 
     // XHR states
@@ -35,27 +35,28 @@ function(utils, Smuggler) {
         this.setXHRMethod(method, proxy);
     };
 
-    Hijax.prototype.createProxy = function(name, url) {
-        var proxy = new Smuggler(name, url);
+    Hijax.prototype.createProxy = function(name, condition, cbs) {
+        var proxy = new Hijacker(name, condition, cbs);
 
         this.proxies[name] = proxy;
 
         return proxy;
     };
 
-    Hijax.prototype.proxy = function(name, url) {
-        // Look for a hijacker with the given name
-        if (!url) {
-            // Getter
-            if (!(name in this.proxies)) {
-                throw name + ' proxy does not exist!';
-            }
-            return this.proxies[name];
-        }
+    Hijax.prototype.set = function(name, condition, cbs) {
         // Setter
-        return this.createProxy(name, url);
+        return this.createProxy(name, condition, cbs);
     };
 
+    Hijax.prototype.addListener = function(name, method, cb) {
+        // Getter
+        if (!(name in this.proxies)) {
+            throw name + ' proxy does not exist!';
+        }
+        this.proxies[name].addListener(method, cb);
+    };
+
+    // Dispatch current event to all listeners
     Hijax.prototype.dispatch = function(event, xhr, callback) {
         var proxies = this.proxies;
         for (var proxy in proxies) {
@@ -93,24 +94,22 @@ function(utils, Smuggler) {
             }
         };
 
-        xhr.addEventListener('readystatechange',
-            function() {
-                var result;
-
-                if(typeof xhr.onreadystatechange === 'function') {
-                    // Desktop has a RSC handler set
+        if(typeof xhr.onreadystatechange === 'function') {
+            // Desktop has a RSC handler set
+            xhr.onreadystatechange = utils.proxy(
+                xhr.onreadystatechange, preHandler, postHandler
+            );
+        } else {
+            xhr.addEventListener(
+                'readystatechange',
+                function() {
+                    var result;
                     preHandler();
-                    result = xhr.onreadystatechange.apply(this, arguments);
                     postHandler();
-                } else {
-                    preHandler();
-                    postHandler();
-                }
-
-            },
-            false
-        );
-
+                },
+                false
+            );
+        }
     });
 
     return hijax;

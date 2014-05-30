@@ -3,7 +3,7 @@ require.config({
     paths: {
         'utils': 'src/utils',
 
-        'jquery': 'bower_components/jquery/dist/jquery'
+        'jquery': 'bower_components/jquery/jquery'
     },
     shim: {
         'jquery': {
@@ -13,16 +13,35 @@ require.config({
 });
 
 define(['src/hijax', 'jquery'], function(hiJax, $) {
-    // Initial AJAX request: .beforeSend
-    // Server AJAX response: .receive
-    // After handler processing: .complete
-    var hijacker = hiJax
-        .proxy('home', '/')
-        .receive(function(xhr) {
-            console.info('This is proxied before the AJAX handler');
+    var $ajaxContainer = $('#ajax-container');
+
+    // Instantiate proxy
+    hiJax
+        .set('home', '/example/myUrl', {
+            beforeSend: function() {
+                console.log('Before send');
+            }
         });
 
-    $.get('/', function() {
-        console.log('AJAX handler');
+    hiJax.addListener('home', 'complete', function() {
+        console.log('Before send 2');
+    });
+
+    // Pass URL match as function
+    var condition = function(url) {
+        return (/^\/example\/myUrl$/).test('/example/myUrl');
+    };
+
+    // Listeners can exist independently
+    hiJax.set('home2', condition, {
+        beforeSend: function() {
+            console.log('I\'m listening too!');
+        }
+    });
+
+    $.get('/example/myUrl', function(data, status, xhr) {
+        var parsed = JSON.parse(data);
+        console.log('Data received: ', data);
+        $ajaxContainer.html('foo is ' + parsed.foo);
     });
 });
