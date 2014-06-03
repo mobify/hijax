@@ -2,6 +2,7 @@ require.config({
     baseUrl: '../../',
     paths: {
         'utils': 'src/utils',
+        'desktop': 'example/desktop',
 
         'jquery': 'bower_components/jquery/jquery'
     },
@@ -12,44 +13,51 @@ require.config({
     }
 });
 
-define(['src/hijax', 'jquery'], function(hiJax, $) {
+define(['src/hijax', 'jquery', 'desktop'], function(hiJax, $, desktop) {
     var $ajaxContainer = $('#ajax-container');
     // URL match as function
     var condition = function(url) {
         return (/^\/example\/myUrl$/).test('/example/myUrl');
     };
+    var log = function(caller, message) {
 
-    function log(caller, message) {
-        $ajaxContainer.append('<p><strong>' + caller + ': </strong>' + message + '</p>');
-    }
+        $ajaxContainer.append('<p class="x-' + caller + '"><strong>' +
+            caller + ': </strong>' + message + '</p>');
+    };
 
     // Instantiate proxy
     hiJax
-        .set('homeListener', '/example/myUrl', {
-            beforeSend: function() {
+        .set('proxy1', '/example/myUrl', {
+            // Request is being sent
+            beforeSend: function(data, statusText, xhr) {
                 log(this.name, 'Before send');
             },
-            receive: function() {
-                log(this.name, 'Receive');
+            // Any data received
+            receive: function(data, statusText, xhr) {
+                if(xhr.readyState === 4) {
+                    log(this.name, 'Receive done! ');
+                } else {
+                    log(this.name, 'Receiving data...');
+                }
             },
-            complete: function() {
-                log(this.name, 'Complete');
+            // Request completed (desktop listener has finished processing it)
+            complete: function(data, statusText, xhr) {
+                log(this.name, 'Request complete');
             }
         });
 
-    hiJax.addListener('homeListener', 'complete', function() {
-        log(this.name, 'Complete 2');
+    // Multiple listeners can be set on the same proxy
+    hiJax.addListener('proxy1', 'complete', function() {
+        log(this.name, 'Request complete');
     });
 
-    // Listeners can exist independently
-    hiJax.set('homeListener2', condition, {
-        complete: function() {
-            log(this.name, 'Complete');
+    // Instantiate another proxy
+    hiJax.set('proxy2', condition, {
+        complete: function(data, statusText, xhr) {
+            log(this.name, 'Request complete');
         }
     });
 
-    $.get('/example/myUrl', function(data, status, xhr) {
-        var parsed = JSON.parse(data);
-        log('Desktop', 'Received data: ' + data);
-    });
+    log('proxies', 'Ready');
+    desktop();
 });

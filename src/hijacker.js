@@ -27,11 +27,12 @@ define(['src/utils'], function(utils) {
     // Handles an XHR event, like beforeSend, receive or complete
     Hijacker.prototype.fireEvent = function(event, xhr) {
         var eventCallbacks = this.callbacks[event];
+        var data = xhr.response || xhr.responseText;
 
         if(!this.condition(xhr.url)) { return; }
 
         for (var ctr = 0; ctr < eventCallbacks.length; ctr++) {
-            eventCallbacks[ctr].call(this, xhr);
+            eventCallbacks[ctr].call(this, data, xhr.statusText, xhr);
         }
     };
 

@@ -2,7 +2,9 @@ define([
     'src/hijacker'
 ],
 function(Hijacker) {
-    var hijacker = new Hijacker('test', '/');
+    var hijacker = new Hijacker('test', '/', {
+        receive: function() {}
+    });
 
     describe('Hijacker Tests', function() {
         it('provides the Hijacker constructor', function(done) {

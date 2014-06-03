@@ -87,38 +87,39 @@ function(utils, Hijacker) {
         var xhr = this;
 
         var receiveHandler = function() {
-            hijax.dispatch('receive', xhr, function() {
-                hijax.active--;
-            });
+            hijax.dispatch('receive', xhr);
         };
         var completeHandler = function() {
+            // Might be triggered before complete, on RSC
             if(xhr.readyState === states.DONE) {
-                hijax.dispatch('complete', xhr);
+                hijax.dispatch('complete', xhr, function() {
+                    hijax.active--;
+                });
             }
         };
 
         var proxyListeners = function() {
             if(xhr.proxied) { return; }
-            xhr.onreadystatechange = utils.proxy(
-                xhr.onreadystatechange, receiveHandler, completeHandler
-            );
-            xhr.proxied = true;
+
+            if(typeof xhr.onreadystatechange === 'function') {
+                // Desktop RSC handler is set
+                xhr.onreadystatechange = utils.proxy(
+                    xhr.onreadystatechange, receiveHandler, completeHandler
+                );
+                // Indicates that we don't need to listen to the event anymore
+                xhr.proxied = true;
+            } else if(xhr.readyState === states.LOADING) {
+                receiveHandler();
+            } else if(xhr.readyState === states.DONE) {
+                completeHandler();
+            }
         };
 
-        // We are not guaranteed to have an onRSC method on the XHR object.
-        // For example, jQuery fires off send before settings the XHR's
-        // onRSC method
-        if(typeof xhr.onreadystatechange === 'function' && !xhr.proxied) {
-            proxyListeners();
-        } else {
-            // TODO: Figure out how to sandwich any desktop methods between
-            // pre and post
-            xhr.addEventListener(
-                'readystatechange',
-                proxyListeners,
-                false
-            );
-        }
+        xhr.addEventListener(
+            'readystatechange',
+            proxyListeners,
+            false
+        );
     });
 
     return hijax;
