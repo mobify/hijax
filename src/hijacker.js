@@ -27,7 +27,7 @@ define(['src/utils'], function(utils) {
     // Handles an XHR event, like beforeSend, receive or complete
     Hijacker.prototype.fireEvent = function(event, xhr) {
         var eventCallbacks = this.callbacks[event];
-        var data = xhr.response || xhr.responseText;
+        var data = xhr.response;
 
         if (!this.condition(xhr.url)) { return; }
 
