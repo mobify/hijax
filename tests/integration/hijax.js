@@ -3,19 +3,13 @@ define([
     'jquery'
 ],
 function(hijax, jQuery) {
-    var foo = 'baa';
+    var foo;
 
     beforeEach(function() {
         hijax
             .set('home', '/example/myUrl', {
                 receive: function(data, status, xhr) {
-                    delete xhr.response;
-                    delete xhr.responseText;
-
-                    xhr.response = data.replace(/bar/, 'baz');
-                    xhr.responseText = data.replace(/bar/, 'baz');
-
-                    console.log('\n\nReceive', data, xhr);
+                    foo = 'baz';
                 }
             });
     });
@@ -27,10 +21,9 @@ function(hijax, jQuery) {
                     url: '/example/myUrl',
                     type: 'GET',
                     success: function(data, status, xhr) {
-                        foo = JSON.parse(data).foo;
-                        console.log('\n\nGet', xhr);
-
-                        assert.equal(foo, 'baz', 'Foo value is modified by Hijax');
+                        // Should have a value thanks to the proxy
+                        foo = foo || JSON.parse(data).foo;
+                        assert.equal(foo, 'baz', 'Foo value is set by Hijax');
                         done();
                     }
                 });
