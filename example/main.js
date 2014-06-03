@@ -35,6 +35,12 @@ define(['src/hijax', 'jquery', 'desktop'], function(hiJax, $, desktop) {
             // Any data received
             receive: function(data, statusText, xhr) {
                 if(xhr.readyState === 4) {
+                    delete xhr.response;
+                    delete xhr.responseText;
+
+                    xhr.response = data.replace(/bar/, 'baz');
+                    xhr.responseText = data.replace(/bar/, 'baz');
+
                     log(this.name, 'Receive done! ');
                 } else {
                     log(this.name, 'Receiving data...');
@@ -58,6 +64,6 @@ define(['src/hijax', 'jquery', 'desktop'], function(hiJax, $, desktop) {
         }
     });
 
-    log('proxies', 'Ready');
+    log('proxies', 'Proxies set');
     desktop();
 });

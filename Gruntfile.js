@@ -35,8 +35,28 @@ module.exports = function(grunt) {
         config[configName] = _.extend(config[configName] || {}, option);
     });
 
+    config = _.extend(config, {
+        jshint:{
+            dev: {
+                src: ['src/**/*.js'],
+                options: {
+                    // The task fails if force is set to false. With true, it shows the
+                    // linting errors, but continues
+                    force: false,
+                    jshintrc: 'node_modules/mobify-code-style/javascript/.jshintrc'
+                }
+            }
+        },
+        jscs: {
+            options: {
+                config: 'node_modules/mobify-code-style/javascript/.jscsrc'
+            },
+            src: ['src/**/*.js']
+        }
+    });
+
     grunt.initConfig(config);
 
-    grunt.registerTask('serve', ['connect:serve:keepalive']);
+    grunt.registerTask('serve', ['jshint:dev', 'jscs', 'connect:serve:keepalive']);
     grunt.registerTask('test', ['connect:serve', 'mocha_phantomjs']);
 };

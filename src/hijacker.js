@@ -1,6 +1,6 @@
 define(['src/utils'], function(utils) {
     function Hijacker(name, condition, callbacks) {
-        if(!name || !condition || !callbacks || typeof callbacks !== 'object') {
+        if (!name || !condition || !callbacks || typeof callbacks !== 'object') {
             throw 'Missing or invalid Hijacker proxy initialization options';
         }
 
@@ -15,8 +15,8 @@ define(['src/utils'], function(utils) {
         };
 
         // Set the callbacks that have been provided
-        for(var event in callbacks) {
-            if(callbacks.hasOwnProperty(event)) {
+        for (var event in callbacks) {
+            if (callbacks.hasOwnProperty(event)) {
                 this.callbacks[event].push(callbacks[event]);
             }
         }
@@ -29,7 +29,7 @@ define(['src/utils'], function(utils) {
         var eventCallbacks = this.callbacks[event];
         var data = xhr.response || xhr.responseText;
 
-        if(!this.condition(xhr.url)) { return; }
+        if (!this.condition(xhr.url)) { return; }
 
         for (var ctr = 0; ctr < eventCallbacks.length; ctr++) {
             eventCallbacks[ctr].call(this, data, xhr.statusText, xhr);

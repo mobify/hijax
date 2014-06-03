@@ -64,7 +64,7 @@ function(utils, Hijacker) {
     Hijax.prototype.dispatch = function(event, xhr, callback) {
         var proxies = this.proxies;
         for (var proxy in proxies) {
-            if(proxies.hasOwnProperty(proxy)) {
+            if (proxies.hasOwnProperty(proxy)) {
                 proxies[proxy].fireEvent(event, xhr);
             }
         }
@@ -91,7 +91,7 @@ function(utils, Hijacker) {
         };
         var completeHandler = function() {
             // Might be triggered before complete, on RSC
-            if(xhr.readyState === states.DONE) {
+            if (xhr.readyState === states.DONE) {
                 hijax.dispatch('complete', xhr, function() {
                     hijax.active--;
                 });
@@ -99,18 +99,18 @@ function(utils, Hijacker) {
         };
 
         var proxyListeners = function() {
-            if(xhr.proxied) { return; }
+            if (xhr.proxied) { return; }
 
-            if(typeof xhr.onreadystatechange === 'function') {
+            if (typeof xhr.onreadystatechange === 'function') {
                 // Desktop RSC handler is set
                 xhr.onreadystatechange = utils.proxy(
                     xhr.onreadystatechange, receiveHandler, completeHandler
                 );
                 // Indicates that we don't need to listen to the event anymore
                 xhr.proxied = true;
-            } else if(xhr.readyState === states.LOADING) {
+            } else if (xhr.readyState === states.LOADING) {
                 receiveHandler();
-            } else if(xhr.readyState === states.DONE) {
+            } else if (xhr.readyState === states.DONE) {
                 completeHandler();
             }
         };

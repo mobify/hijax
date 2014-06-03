@@ -5,24 +5,35 @@ define([
 function(hijax, jQuery) {
     var foo = 'baa';
 
-    // beforeEach(function() {
-    //     hijax
-    //         .set('home', '/example/myUrl', {
-    //             complete: function(data, status, xhr) {
-    //                 foo = 'baz';
-    //             }
-    //         });
-    // });
+    beforeEach(function() {
+        hijax
+            .set('home', '/example/myUrl', {
+                receive: function(data, status, xhr) {
+                    delete xhr.response;
+                    delete xhr.responseText;
 
-    // describe('Hijax proxying tests', function() {
-    //     it('proxies the AJAX request', function(done) {
-    //         jQuery
-    //             .get('/example/myUrl', function(data) {
-    //                 foo = JSON.parse(data).foo;
-    //                 done();
-    //             });
+                    xhr.response = data.replace(/bar/, 'baz');
+                    xhr.responseText = data.replace(/bar/, 'baz');
 
-    //         assert.equal(foo, 'baz', 'AJAX value is modified by Hijax');
-    //     });
-    // });
+                    console.log('\n\nReceive', data, xhr);
+                }
+            });
+    });
+
+    describe('Hijax proxying tests', function() {
+        it('proxies the AJAX request', function(done) {
+            jQuery
+                .ajax({
+                    url: '/example/myUrl',
+                    type: 'GET',
+                    success: function(data, status, xhr) {
+                        foo = JSON.parse(data).foo;
+                        console.log('\n\nGet', xhr);
+
+                        assert.equal(foo, 'baz', 'Foo value is modified by Hijax');
+                        done();
+                    }
+                });
+        });
+    });
 });
