@@ -1,3 +1,7 @@
+/*
+TODO: Test with devices
+TODO: Test with multiple versions of Zepto, jQuery, Prototype, etc.
+*/
 define([
     'src/utils',
     'src/hijacker'
@@ -81,32 +85,37 @@ function(utils, Hijacker) {
 
     hijax.proxyXhrMethod('send', function() {
         var xhr = this;
-        var preHandler = function() {
-            if (xhr.readyState === states.DONE) {
-                hijax.dispatch('receive', xhr, function() {
-                    hijax.active--;
-                });
-            }
+
+        var receiveHandler = function() {
+            hijax.dispatch('receive', xhr, function() {
+                hijax.active--;
+            });
         };
-        var postHandler = function() {
+        var completeHandler = function() {
             if(xhr.readyState === states.DONE) {
                 hijax.dispatch('complete', xhr);
             }
         };
 
-        if(typeof xhr.onreadystatechange === 'function') {
-            // Desktop has a RSC handler set
+        var proxyListeners = function() {
+            if(xhr.proxied) { return; }
             xhr.onreadystatechange = utils.proxy(
-                xhr.onreadystatechange, preHandler, postHandler
+                xhr.onreadystatechange, receiveHandler, completeHandler
             );
+            xhr.proxied = true;
+        };
+
+        // We are not guaranteed to have an onRSC method on the XHR object.
+        // For example, jQuery fires off send before settings the XHR's
+        // onRSC method
+        if(typeof xhr.onreadystatechange === 'function' && !xhr.proxied) {
+            proxyListeners();
         } else {
+            // TODO: Figure out how to sandwich any desktop methods between
+            // pre and post
             xhr.addEventListener(
                 'readystatechange',
-                function() {
-                    var result;
-                    preHandler();
-                    postHandler();
-                },
+                proxyListeners,
                 false
             );
         }

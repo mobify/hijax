@@ -14,34 +14,42 @@ require.config({
 
 define(['src/hijax', 'jquery'], function(hiJax, $) {
     var $ajaxContainer = $('#ajax-container');
-
-    // Instantiate proxy
-    hiJax
-        .set('home', '/example/myUrl', {
-            beforeSend: function() {
-                console.log('Before send');
-            }
-        });
-
-    hiJax.addListener('home', 'complete', function() {
-        console.log('Before send 2');
-    });
-
-    // Pass URL match as function
+    // URL match as function
     var condition = function(url) {
         return (/^\/example\/myUrl$/).test('/example/myUrl');
     };
 
+    function log(caller, message) {
+        $ajaxContainer.append('<p><strong>' + caller + ': </strong>' + message + '</p>');
+    }
+
+    // Instantiate proxy
+    hiJax
+        .set('homeListener', '/example/myUrl', {
+            beforeSend: function() {
+                log(this.name, 'Before send');
+            },
+            receive: function() {
+                log(this.name, 'Receive');
+            },
+            complete: function() {
+                log(this.name, 'Complete');
+            }
+        });
+
+    hiJax.addListener('homeListener', 'complete', function() {
+        log(this.name, 'Complete 2');
+    });
+
     // Listeners can exist independently
-    hiJax.set('home2', condition, {
-        beforeSend: function() {
-            console.log('I\'m listening too!');
+    hiJax.set('homeListener2', condition, {
+        complete: function() {
+            log(this.name, 'Complete');
         }
     });
 
     $.get('/example/myUrl', function(data, status, xhr) {
         var parsed = JSON.parse(data);
-        console.log('Data received: ', data);
-        $ajaxContainer.html('foo is ' + parsed.foo);
+        log('Desktop', 'Received data: ' + data);
     });
 });
