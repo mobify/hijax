@@ -4,7 +4,7 @@ require.config({
         'utils': 'src/utils',
         'desktop': 'example/desktop',
 
-        'jquery': 'bower_components/jquery/jquery'
+        'jquery': 'bower_components/jquery/dist/jquery'
     },
     shim: {
         'jquery': {
