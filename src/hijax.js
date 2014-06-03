@@ -108,6 +108,13 @@ function(utils, Hijacker) {
                 );
                 // Indicates that we don't need to listen to the event anymore
                 xhr.proxied = true;
+            } else if(typeof xhr.onload === 'function') {
+                // Desktop RSC handler is set
+                xhr.onload = utils.proxy(
+                    xhr.onload, receiveHandler, completeHandler
+                );
+                // Indicates that we don't need to listen to the event anymore
+                xhr.proxied = true;
             } else if (xhr.readyState === states.LOADING) {
                 receiveHandler();
             } else if (xhr.readyState === states.DONE) {
