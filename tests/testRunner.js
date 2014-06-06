@@ -8,7 +8,7 @@ require(['config'], function(){
             'tests/unit/hijax',
             'tests/unit/hijacker',
 
-            'tests/integration/heist'
+            'tests/integration/hijax'
         ];
 
         require(tests, function() {

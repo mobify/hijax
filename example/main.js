@@ -2,6 +2,7 @@ require.config({
     baseUrl: '../../',
     paths: {
         'utils': 'src/utils',
+        'desktop': 'example/desktop',
 
         'jquery': 'bower_components/jquery/dist/jquery'
     },
@@ -12,17 +13,47 @@ require.config({
     }
 });
 
-define(['src/hijax', 'jquery'], function(hiJax, $) {
-    // Initial AJAX request: .beforeSend
-    // Server AJAX response: .receive
-    // After handler processing: .complete
-    var hijacker = hiJax
-        .proxy('home', '/')
-        .receive(function(xhr) {
-            console.info('This is proxied before the AJAX handler');
+define(['src/hijax', 'jquery', 'desktop'], function(hiJax, $, desktop) {
+    var $ajaxContainer = $('#ajax-container');
+    // URL match as function
+    var condition = function(url) {
+        return (/^\/example\/myUrl$/).test('/example/myUrl');
+    };
+    var log = function(caller, message) {
+
+        $ajaxContainer.append('<p class="x-' + caller + '"><strong>' +
+            caller + ': </strong>' + message + '</p>');
+    };
+
+    // Instantiate proxy
+    hiJax
+        .set('proxy1', '/example/myUrl', {
+            // Request is being sent
+            beforeSend: function(data, statusText, xhr) {
+                log(this.name, 'Before send');
+            },
+            // Any data received
+            receive: function(data, statusText, xhr) {
+                log(this.name, 'Receiving data...');
+            },
+            // Request completed (desktop listener has finished processing it)
+            complete: function(data, statusText, xhr) {
+                log(this.name, 'Request complete');
+            }
         });
 
-    $.get('/', function() {
-        console.log('AJAX handler');
+    // Multiple listeners can be set on the same proxy
+    hiJax.addListener('proxy1', 'complete', function() {
+        log(this.name, 'Request complete');
     });
+
+    // Instantiate another proxy
+    hiJax.set('proxy2', condition, {
+        complete: function(data, statusText, xhr) {
+            log(this.name, 'Request complete');
+        }
+    });
+
+    log('proxies', 'Proxies set');
+    desktop();
 });

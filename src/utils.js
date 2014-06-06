@@ -1,4 +1,8 @@
 define([], function() {
+
+    /**
+     * Sandwiches a given function between two given functions
+     */
     function proxy(destFn, beforeFn, afterFn) {
         var _destFn = destFn;
         return function() {

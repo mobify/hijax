@@ -1,8 +1,12 @@
+/*
+TODO: Test with devices
+TODO: Test with multiple versions of Zepto, jQuery, Prototype, etc.
+*/
 define([
     'src/utils',
     'src/hijacker'
 ],
-function(utils, Smuggler) {
+function(utils, Hijacker) {
     if (window.hijax) { return window.hijax; }
 
     // XHR states
@@ -35,31 +39,32 @@ function(utils, Smuggler) {
         this.setXHRMethod(method, proxy);
     };
 
-    Hijax.prototype.createProxy = function(name, url) {
-        var proxy = new Smuggler(name, url);
+    Hijax.prototype.createProxy = function(name, condition, cbs) {
+        var proxy = new Hijacker(name, condition, cbs);
 
         this.proxies[name] = proxy;
 
         return proxy;
     };
 
-    Hijax.prototype.proxy = function(name, url) {
-        // Look for a hijacker with the given name
-        if (!url) {
-            // Getter
-            if (!(name in this.proxies)) {
-                throw name + ' proxy does not exist!';
-            }
-            return this.proxies[name];
-        }
+    Hijax.prototype.set = function(name, condition, cbs) {
         // Setter
-        return this.createProxy(name, url);
+        return this.createProxy(name, condition, cbs);
     };
 
+    Hijax.prototype.addListener = function(name, method, cb) {
+        // Getter
+        if (!(name in this.proxies)) {
+            throw name + ' proxy does not exist!';
+        }
+        this.proxies[name].addListener(method, cb);
+    };
+
+    // Dispatch current event to all listeners
     Hijax.prototype.dispatch = function(event, xhr, callback) {
         var proxies = this.proxies;
         for (var proxy in proxies) {
-            if(proxies.hasOwnProperty(proxy)) {
+            if (proxies.hasOwnProperty(proxy)) {
                 proxies[proxy].fireEvent(event, xhr);
             }
         }
@@ -80,37 +85,46 @@ function(utils, Smuggler) {
 
     hijax.proxyXhrMethod('send', function() {
         var xhr = this;
-        var preHandler = function() {
+
+        var receiveHandler = function() {
+            hijax.dispatch('receive', xhr);
+        };
+        var completeHandler = function() {
+            // Might be triggered before complete, on RSC
             if (xhr.readyState === states.DONE) {
-                hijax.dispatch('receive', xhr, function() {
+                hijax.dispatch('complete', xhr, function() {
                     hijax.active--;
                 });
             }
         };
-        var postHandler = function() {
-            if(xhr.readyState === states.DONE) {
-                hijax.dispatch('complete', xhr);
+
+        var proxyListeners = function() {
+            if (xhr.proxied) { return; }
+
+            // Desktop AJAX might be using onRSC, onload, or listening to the 
+            // XHR rsc event
+            if (typeof xhr.onreadystatechange === 'function') {
+                xhr.onreadystatechange = utils.proxy(
+                    xhr.onreadystatechange, receiveHandler, completeHandler
+                );
+                xhr.proxied = true;
+            } else if(typeof xhr.onload === 'function') {
+                xhr.onload = utils.proxy(
+                    xhr.onload, receiveHandler, completeHandler
+                );
+                xhr.proxied = true;
+            } else if (xhr.readyState === states.LOADING) {
+                receiveHandler();
+            } else if (xhr.readyState === states.DONE) {
+                completeHandler();
             }
         };
 
-        xhr.addEventListener('readystatechange',
-            function() {
-                var result;
-
-                if(typeof xhr.onreadystatechange === 'function') {
-                    // Desktop has a RSC handler set
-                    preHandler();
-                    result = xhr.onreadystatechange.apply(this, arguments);
-                    postHandler();
-                } else {
-                    preHandler();
-                    postHandler();
-                }
-
-            },
+        xhr.addEventListener(
+            'readystatechange',
+            proxyListeners,
             false
         );
-
     });
 
     return hijax;
