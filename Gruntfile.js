@@ -12,7 +12,8 @@ module.exports = function(grunt) {
 
     var npmTasks = [
         'grunt-contrib-connect',
-        'grunt-mocha-phantomjs'
+        'grunt-mocha-phantomjs',
+        'grunt-requirejs'
     ];
 
     npmTasks.forEach(function(taskName) {

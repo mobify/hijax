@@ -20,14 +20,16 @@ define(['src/hijax', 'jquery', 'desktop'], function(hiJax, $, desktop) {
         return (/^\/example\/myUrl$/).test('/example/myUrl');
     };
     var log = function(caller, message) {
-
         $ajaxContainer.append('<p class="x-' + caller + '"><strong>' +
             caller + ': </strong>' + message + '</p>');
     };
 
     // Instantiate proxy
     hiJax
-        .set('proxy1', '/example/myUrl', {
+        .set(
+            'proxy1',
+            '/example/myUrl',
+            {
             // Request is being sent
             beforeSend: function(data, statusText, xhr) {
                 log(this.name, 'Before send');

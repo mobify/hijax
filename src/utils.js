@@ -1,4 +1,4 @@
-define([], function() {
+define('src/utils', [], function() {
 
     /**
      * Sandwiches a given function between two given functions

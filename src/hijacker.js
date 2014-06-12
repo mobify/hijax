@@ -1,4 +1,4 @@
-define(['src/utils'], function(utils) {
+define('src/hijacker', ['src/utils'], function(utils) {
     function Hijacker(name, condition, callbacks) {
         if (!name || !condition || !callbacks || typeof callbacks !== 'object') {
             throw 'Missing or invalid Hijacker proxy initialization options';

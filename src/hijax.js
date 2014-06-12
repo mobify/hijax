@@ -2,7 +2,8 @@
 TODO: Test with devices
 TODO: Test with multiple versions of Zepto, jQuery, Prototype, etc.
 */
-define([
+define(
+'src/hijax', [
     'src/utils',
     'src/hijacker'
 ],
@@ -101,14 +102,14 @@ function(utils, Hijacker) {
         var proxyListeners = function() {
             if (xhr.proxied) { return; }
 
-            // Desktop AJAX might be using onRSC, onload, or listening to the 
+            // Desktop AJAX might be using onRSC, onload, or listening to the
             // XHR rsc event
             if (typeof xhr.onreadystatechange === 'function') {
                 xhr.onreadystatechange = utils.proxy(
                     xhr.onreadystatechange, receiveHandler, completeHandler
                 );
                 xhr.proxied = true;
-            } else if(typeof xhr.onload === 'function') {
+            } else if (typeof xhr.onload === 'function') {
                 xhr.onload = utils.proxy(
                     xhr.onload, receiveHandler, completeHandler
                 );
