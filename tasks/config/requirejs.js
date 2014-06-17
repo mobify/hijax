@@ -2,10 +2,9 @@ var path = require("path");
 
 module.exports = function(grunt) {
     var options = {
-        baseUrl: '.',
-        name: 'src/hijax',
+        baseUrl: 'src',
+        name: 'hijax',
         removeCombined: true,
-        almond: true,
         optimize: 'none',
         out: 'dist/hijax.js'
     };
@@ -14,6 +13,7 @@ module.exports = function(grunt) {
         dev: {
             options: options
         },
+
         prod: {
             options: grunt.util._.extend(
                 grunt.util._.clone(options),

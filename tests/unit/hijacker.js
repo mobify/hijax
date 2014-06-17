@@ -1,6 +1,4 @@
-define([
-    'src/hijacker'
-],
+define(['hijacker'],
 function(Hijacker) {
     var hijacker = new Hijacker('test', '/', {
         receive: function() {}
@@ -8,12 +6,14 @@ function(Hijacker) {
 
     describe('Hijacker Tests', function() {
         it('provides the Hijacker constructor', function(done) {
-            assert.equal(typeof Hijacker, 'function', 'Hijacker constructor created');
+            assert.equal(typeof Hijacker, 'function',
+                'Hijacker constructor created');
             done();
         });
 
         it('creates a Hijacker instance', function(done) {
-            assert.equal(typeof hijacker, 'object', 'Hijacker instance created');
+            assert.equal(typeof hijacker, 'object',
+                'Hijacker instance created');
             done();
         });
     });

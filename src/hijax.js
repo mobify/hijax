@@ -1,14 +1,47 @@
-/*
-TODO: Test with devices
-TODO: Test with multiple versions of Zepto, jQuery, Prototype, etc.
-*/
-define(
-'src/hijax', [
-    'src/utils',
-    'src/hijacker'
-],
-function(utils, Hijacker) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['hijacker'], factory);
+    } else if (typeof exports === 'object') {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        module.exports = factory(require('hijacker'));
+    } else {
+        // Browser globals (root is window)
+        root.hijax = factory(root.Hijacker);
+    }
+}(this, function(Hijacker) {
     if (window.hijax) { return window.hijax; }
+
+    /**
+     * Proxy destFn, so that beforeFn runs before it, and afterFn runs after it
+     *
+     * @destFn {Function}: Target
+     * @beforeFn {Function}: (optional) Runs before destFn
+     * @afterFn {Function}: (optional) Runs after destFn
+     */
+    function proxyFunction(destFn, beforeFn, afterFn) {
+        var _destFn = destFn;
+        return function() {
+            var result;
+
+            if (typeof destFn !== 'function') {
+                throw destFn + ' is not a function, and cannot be proxied!';
+            }
+
+            if (typeof beforeFn === 'function') {
+                beforeFn.apply(this, arguments);
+            }
+
+            result = _destFn.apply(this, arguments);
+            if (typeof afterFn === 'function') {
+                afterFn.apply(this, arguments);
+            }
+
+            return result;
+        };
+    }
 
     // XHR states
     var hijax;
@@ -36,7 +69,7 @@ function(utils, Hijacker) {
     };
 
     Hijax.prototype.proxyXhrMethod = function(method, before, after) {
-        var proxy = utils.proxy(this.getXHRMethod(method), before, after);
+        var proxy = proxyFunction(this.getXHRMethod(method), before, after);
         this.setXHRMethod(method, proxy);
     };
 
@@ -105,12 +138,12 @@ function(utils, Hijacker) {
             // Desktop AJAX might be using onRSC, onload, or listening to the
             // XHR rsc event
             if (typeof xhr.onreadystatechange === 'function') {
-                xhr.onreadystatechange = utils.proxy(
+                xhr.onreadystatechange = proxyFunction(
                     xhr.onreadystatechange, receiveHandler, completeHandler
                 );
                 xhr.proxied = true;
             } else if (typeof xhr.onload === 'function') {
-                xhr.onload = utils.proxy(
+                xhr.onload = proxyFunction(
                     xhr.onload, receiveHandler, completeHandler
                 );
                 xhr.proxied = true;
@@ -129,4 +162,4 @@ function(utils, Hijacker) {
     });
 
     return hijax;
-});
+}));

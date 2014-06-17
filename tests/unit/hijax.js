@@ -1,6 +1,4 @@
-define([
-    'src/hijax'
-],
+define(['hijax'],
 function(Hijax) {
     describe('Hijax Tests', function() {
         it('creates a global Hijax instance', function() {

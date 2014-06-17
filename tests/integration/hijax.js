@@ -1,7 +1,4 @@
-define([
-    'src/hijax',
-    'jquery'
-],
+define(['hijax','jquery'],
 function(hijax, jQuery) {
     var foo;
 

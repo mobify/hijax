@@ -1,8 +1,9 @@
 require.config({
     baseUrl: '../../',
     paths: {
-        'utils': 'src/utils',
         'desktop': 'example/desktop',
+        'hijax': '../src/hijax',
+        'hijacker': '../src/hijacker',
 
         'jquery': 'bower_components/jquery/dist/jquery'
     },
@@ -13,7 +14,7 @@ require.config({
     }
 });
 
-define(['src/hijax', 'jquery', 'desktop'], function(hiJax, $, desktop) {
+define(['hijax', 'jquery', 'desktop'], function(hiJax, $, desktop) {
     var $ajaxContainer = $('#ajax-container');
     // URL match as function
     var condition = function(url) {
