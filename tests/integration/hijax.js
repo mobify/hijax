@@ -4,8 +4,8 @@ function(hijax, jQuery) {
 
     beforeEach(function() {
         hijax
-            .set('home', '/example/myUrl', {
-                receive: function(data, status, xhr) {
+            .set('home', '/example/response.json', {
+                receive: function(data, xhr) {
                     foo = 'baz';
                 }
             });
@@ -15,7 +15,7 @@ function(hijax, jQuery) {
         it('proxies the AJAX request', function(done) {
             jQuery
                 .ajax({
-                    url: '/example/myUrl',
+                    url: '/example/response.json',
                     type: 'GET',
                     success: function(data, status, xhr) {
                         // Should have a value thanks to the proxy

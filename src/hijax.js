@@ -1,8 +1,7 @@
-/* global Hijacker */
 (function(root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['hijacker'], factory);
+        define('hijax',['hijacker'], factory);
     } else if (typeof exports === 'object') {
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like environments that support module.exports,
@@ -18,30 +17,32 @@
     /**
      * Proxy destFn, so that beforeFn runs before it, and afterFn runs after it
      *
-     * @destFn {Function}: Target
-     * @beforeFn {Function}: (optional) Runs before destFn
-     * @afterFn {Function}: (optional) Runs after destFn
+     * @destFn {Function}:      Target
+     * @beforeFn {Function}:    (optional) Runs before destFn
+     * @afterFn {Function}:     (optional) Runs after destFn
      */
     function proxyFunction(destFn, beforeFn, afterFn) {
-        var _destFn = destFn;
-        return function() {
+        var proxied = function() {
             var result;
 
             if (typeof destFn !== 'function') {
                 throw destFn + ' is not a function, and cannot be proxied!';
             }
-
             if (typeof beforeFn === 'function') {
                 beforeFn.apply(this, arguments);
             }
-
-            result = _destFn.apply(this, arguments);
+            result = destFn.apply(this, arguments);
             if (typeof afterFn === 'function') {
                 afterFn.apply(this, arguments);
             }
 
             return result;
         };
+
+        // Allows accessing original function through our proxy
+        proxied._original = destFn;
+
+        return proxied;
     }
 
     // XHR states
@@ -148,7 +149,7 @@
                     xhr.onload, receiveHandler, completeHandler
                 );
                 xhr.proxied = true;
-            } else if (xhr.readyState === states.LOADING) {
+            } else if (xhr.readyState === states.HEADERS_RECEIVED) {
                 receiveHandler();
             } else if (xhr.readyState === states.DONE) {
                 completeHandler();
@@ -164,3 +165,4 @@
 
     return hijax;
 }));
+
