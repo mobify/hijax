@@ -1,6 +1,6 @@
-/* global log */
-define(['jquery'], function($) {
-    return function() {
+define(['jquery', 'logger'], function($, log) {
+    // We execute requests on page ready
+    $(function() {
         var $ajaxContainer = $('#ajax-container');
 
         log('desktop', 'Sending AJAX request 1');
@@ -22,5 +22,5 @@ define(['jquery'], function($) {
                     ': </strong>Received data: <pre>' + data + '</pre></p>'
                 );
         });
-    };
+    });
 });

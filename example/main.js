@@ -1,9 +1,11 @@
 require.config({
     baseUrl: '../../',
     paths: {
-        'desktop': 'example/desktop',
         'hijax': '../src/hijax',
         'hijacker': '../src/hijacker',
+
+        'logger': 'example/logger',
+        'desktop': 'example/desktop',
 
         'jquery': 'bower_components/jquery/dist/jquery'
     },
@@ -14,25 +16,10 @@ require.config({
     }
 });
 
-define(['hijax', 'jquery', 'desktop'], function(hiJax, $, desktop) {
-    var $ajaxContainer = $('#ajax-container');
-    var $log = $('#log');
-
-    var started = Date.now();
-
+define(['hijax', 'logger', 'desktop'], function(hiJax, log, desktop) {
     // URL match as function
     var condition = function(url) {
         return (/^\/example\/response\.html/).test(url);
-    };
-    window.log = function() {
-        var caller = arguments[0];
-        var args = [].slice.call(arguments, 1);
-        var timestamp = Date.now() - started;
-
-        $log.append('<small><span class="x-' + caller + '">' +
-            caller + '</span><span class="x-timestamp">' + timestamp +
-            'ms</span></small>' +
-            args.join(' ') + '</p>');
     };
 
     // Instantiate proxy
@@ -72,6 +59,5 @@ define(['hijax', 'jquery', 'desktop'], function(hiJax, $, desktop) {
         }
     });
 
-    log('Hijax', 'Proxies set');
-    desktop();
+    log('hijax', 'Proxies set');
 });
