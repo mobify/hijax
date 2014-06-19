@@ -4,7 +4,8 @@ define(['jquery'], function($) {
 
     return function() {
         var caller = arguments[0];
-        var classes = typeof arguments[1] === 'string' ? arguments[1] : '';
+        var classes = arguments.length > 2 &&
+            typeof arguments[1] === 'string' ? arguments[1] : '';
         var args = [].slice.call(arguments, classes.length ? 2 : 1);
         
         var timestamp = Date.now() - started;

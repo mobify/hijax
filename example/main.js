@@ -59,5 +59,5 @@ define(['hijax', 'logger', 'desktop'], function(hiJax, log, desktop) {
         }
     });
 
-    log('hijax', 'Proxies set');
+    log('hijax', '', 'Proxies set');
 });
