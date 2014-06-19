@@ -42,8 +42,8 @@
         var customParsers = options.dataParsers;
 
         if (customParsers) {
-            for(var parser in customParsers) {
-                if(customParsers.hasOwnProperty(parser)) {
+            for (var parser in customParsers) {
+                if (customParsers.hasOwnProperty(parser)) {
                     this.dataParsers[parser] = customParsers[parser];
                 }
             }
@@ -135,10 +135,10 @@
         var responseHeaderType = this.getResponseHeaderType(xhr);
         var responses = getResponses(xhr);
 
-        if(responses[responseHeaderType]) {
+        if (responses[responseHeaderType]) {
             // A parsed response has been provided
             return responses[responseHeaderType];
-        } else if(parsers[responseHeaderType]) {
+        } else if (parsers[responseHeaderType]) {
             // We can convert this data type using a parser
             return parsers[responseHeaderType](xhr.response);
         }
