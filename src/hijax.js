@@ -39,9 +39,6 @@
             return result;
         };
 
-        // Allows accessing original function through our proxy
-        proxied._original = destFn;
-
         return proxied;
     }
 

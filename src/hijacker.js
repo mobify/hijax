@@ -31,9 +31,10 @@
         };
 
         var defaultParsers = {
-            '* text': String,
-            'text html': function(html) { return html; },
-            'text json': JSON.parse
+            'text': String,
+            'html': function(html) { return html; },
+            'xml': function(xml) { return xml; },
+            'json': JSON.parse
         };
 
         // Custom parsers for data types
@@ -67,6 +68,7 @@
     };
 
     // Get a particular response header value by key
+    // Extracted from jQuery 2.1.1
     Hijacker.prototype.getResponseHeader = function(xhr, key) {
         var rHeaders = /^(.*?):[ \t]*([^\r\n]*)$/mg;
         var match;
@@ -93,7 +95,8 @@
         var responses = {};
         var responseFields = {
             'text': 'responseText',
-            'json': 'responseJSON'
+            'json': 'responseJSON',
+            'xml': 'responseXML'
         };
 
         // What responses are available?
@@ -107,7 +110,7 @@
     }
 
     // Check which response types have been provided by the server
-    Hijacker.prototype.detectResponseTypes = function(xhr) {
+    Hijacker.prototype.getResponseHeaderType = function(xhr) {
         var detectedTypes = [];
         var contentType = this.getResponseHeader(xhr, 'Content-Type');
         var knownTypes = {
@@ -119,56 +122,31 @@
         // Check if this is a known data type, and add it to the stack
         for (var type in knownTypes) {
             if (knownTypes[type] && knownTypes[type].test(contentType)) {
-                detectedTypes.unshift(type);
-                break;
+                return type;
             }
         }
 
-        return detectedTypes;
+        return 'text';
     };
 
     // Detect the type of response, and convert it to a usable type
     Hijacker.prototype.parseResponse = function(xhr) {
         var parsers = this.dataParsers;
-        var rHeaders = this.detectResponseTypes(xhr);
+        var responseHeaderType = this.getResponseHeaderType(xhr);
         var responses = getResponses(xhr);
 
-        var firstDataType, finalDataType;
-        var rHeaderType = rHeaders[0];
-
-        // Processed response exists, for eg., responseJSON
-        if (rHeaderType in responses) {
-            finalDataType = rHeaderType;
-        } else {
-            // Can we convert the response?
-            // TODO: Refactor to fix lack of hasOwnProperty check
-            /*jshint forin: false */
-            for (var type in responses) {
-                // Unable to find a response header type
-                if (!rHeaderType) {
-                    finalDataType = type;
-                    break;
-                } else if (parsers[type + ' ' + rHeaderType]) {
-                    // We found a converter for the specified type! We should
-                    // use it
-                    return parsers[type + ' ' + rHeaderType](responses[type]);
-                }
-                if (!firstDataType) {
-                    firstDataType = type;
-                }
-            }
-            // Or just use first one
-            finalDataType = finalDataType || firstDataType;
+        if(responses[responseHeaderType]) {
+            // A parsed response has been provided
+            return responses[responseHeaderType];
+        } else if(parsers[responseHeaderType]) {
+            // We can convert this data type using a parser
+            return parsers[responseHeaderType](xhr.response);
         }
 
-        if (finalDataType) {
-            if (finalDataType !== rHeaderType) {
-                rHeaderType.unshift(finalDataType);
-            }
-            return responses[finalDataType];
-        }
+        // TODO: Injecting scripts into DOM?
 
-        return xhr.response;
+        // Response as string
+        return xhr.responseText;
     };
 
     // Handles an XHR event, like beforeSend, receive or complete
