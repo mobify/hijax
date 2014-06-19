@@ -4,14 +4,41 @@
     <meta charset="UTF-8">
     <title>Hijax Example</title>
     <style>
+    body {
+        font-family: Helvetica;
+        font-size: 14px;
+        color: #000;
+    }
     .x-proxy1 {
-        color: red;
+        color: #FF9084;
     }
     .x-proxy2 {
-        color: blue;
+        color: #88BFE8;
     }
     .x-desktop {
-        color: green;
+        color: #6B3737;
+    }
+    #log {
+        border: 1px solid #eaeaea;
+        padding: 10px;
+        overflow: scroll
+    }
+    pre {
+        height: 20px;
+        padding: 20px 20px 20px 20px;
+        margin: 0 auto;
+        overflow: scroll;
+        background: linear-gradient(to bottom, rgba(255,255,255,0) 0%,rgba(228,228,228,0.15) 76%,rgba(219,219,219,0.29) 100%); /* W3C */
+    }
+    small {
+        display: block;
+        margin: 10px 0 5px 0;
+        border-bottom: 1px solid #eaeaea;
+        font-size: 0.9em;
+    }
+    .x-timestamp {
+        font-size: 0.9em;
+        float: right;
     }
     </style>
 </head>
@@ -19,6 +46,9 @@
 
     <h2>This container will be populated with AJAX:</h2>
     <div id="ajax-container"></div>
+    <div id="log">
+        <h2>Log</h2>
+    </div>
 
     <script data-main="main.js"
         src="../bower_components/requirejs/require.js"></script>

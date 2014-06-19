@@ -16,13 +16,23 @@ require.config({
 
 define(['hijax', 'jquery', 'desktop'], function(hiJax, $, desktop) {
     var $ajaxContainer = $('#ajax-container');
+    var $log = $('#log');
+
+    var started = Date.now();
+
     // URL match as function
     var condition = function(url) {
         return (/^\/example\/response\.html/).test(url);
     };
-    var log = function(caller, message) {
-        $ajaxContainer.append('<p class="x-' + caller + '"><strong>' +
-            caller + ': </strong>' + message + '</p>');
+    window.log = function() {
+        var caller = arguments[0];
+        var args = [].slice.call(arguments, 1);
+        var timestamp = Date.now() - started;
+
+        $log.append('<small><span class="x-' + caller + '">' +
+            caller + '</span><span class="x-timestamp">' + timestamp +
+            'ms</span></small>' +
+            args.join(' ') + '</p>');
     };
 
     // Instantiate proxy
@@ -33,30 +43,35 @@ define(['hijax', 'jquery', 'desktop'], function(hiJax, $, desktop) {
             {
             // Request is being sent
             beforeSend: function(xhr) {
-                log(this.name, 'Before send');
+                log(this.name, 'Intercepting send...');
             },
-            // Any data received
+            // Receiving response
             receive: function(xhr) {
                 log(this.name, 'Receiving data...');
             },
             // Request completed (desktop listener has finished processing it)
             complete: function(data, xhr) {
-                log(this.name, 'Request complete. (' + typeof data + ')');
+                // Fix shitty tabbing
+                // var dHandler = xhr._originalHandler.toString()
+                //     .replace(/\t/g, '  ');
+                // log(this.name, 'Desktop handler: ',
+                //     '<pre>' + dHandler + '</pre>');
+                log(this.name, 'Request complete.');
             }
         });
 
     // Multiple listeners can be set on the same proxy
     hiJax.addListener('proxy1', 'complete', function(data, xhr) {
-        log(this.name, 'Request complete. (' + typeof data + ')');
+        log(this.name, 'Request complete.');
     });
 
     // Instantiate another proxy
     hiJax.set('proxy2', condition, {
         complete: function(data, xhr) {
-            log(this.name, 'Request complete. (' + typeof data + ')');
+            log(this.name, 'Request complete.');
         }
     });
 
-    log('proxies', 'Proxies set');
+    log('Hijax', 'Proxies set');
     desktop();
 });

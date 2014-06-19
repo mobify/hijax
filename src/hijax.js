@@ -137,11 +137,15 @@
             // Desktop AJAX might be using onRSC, onload, or listening to the
             // XHR rsc event
             if (typeof xhr.onreadystatechange === 'function') {
+                // Make original XHR handler available to subscribers
+                xhr._originalHandler = xhr.onreadystatechange;
                 xhr.onreadystatechange = proxyFunction(
                     xhr.onreadystatechange, receiveHandler, completeHandler
                 );
                 xhr.proxied = true;
             } else if (typeof xhr.onload === 'function') {
+                // Make original XHR handler available to subscribers
+                xhr._originalHandler = xhr.onload;
                 xhr.onload = proxyFunction(
                     xhr.onload, receiveHandler, completeHandler
                 );
