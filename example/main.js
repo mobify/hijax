@@ -30,11 +30,11 @@ define(['hijax', 'logger', 'desktop'], function(hiJax, log, desktop) {
             {
             // Request is being sent
             beforeSend: function(xhr) {
-                log(this.name, 'Intercepting send...');
+                log(this.name, 'send', 'Intercepting send...');
             },
             // Receiving response
             receive: function(xhr) {
-                log(this.name, 'Receiving data...');
+                log(this.name, 'receive', 'Receiving data...');
             },
             // Request completed (desktop listener has finished processing it)
             complete: function(data, xhr) {
@@ -43,19 +43,19 @@ define(['hijax', 'logger', 'desktop'], function(hiJax, log, desktop) {
                 //     .replace(/\t/g, '  ');
                 // log(this.name, 'Desktop handler: ',
                 //     '<pre>' + dHandler + '</pre>');
-                log(this.name, 'Request complete.');
+                log(this.name, 'receive', 'Request complete.');
             }
         });
 
     // Multiple listeners can be set on the same proxy
     hiJax.addListener('proxy1', 'complete', function(data, xhr) {
-        log(this.name, 'Request complete.');
+        log(this.name, 'receive', 'Request complete.');
     });
 
     // Instantiate another proxy
     hiJax.set('proxy2', condition, {
         complete: function(data, xhr) {
-            log(this.name, 'Request complete.');
+            log(this.name, 'receive', 'Request complete.');
         }
     });
 

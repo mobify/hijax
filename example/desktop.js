@@ -3,9 +3,9 @@ define(['jquery', 'logger'], function($, log) {
     $(function() {
         var $ajaxContainer = $('#ajax-container');
 
-        log('desktop', 'Sending AJAX request 1');
+        log('joe', 'send', 'Sending AJAX request 1');
         $.get('/example/response.json', function(data, status, xhr) {
-            log('desktop', 'Data received');
+            log('joe', 'receive', 'Data received');
             $ajaxContainer
                 .append(
                     '<p><strong>desktop' +
@@ -13,9 +13,9 @@ define(['jquery', 'logger'], function($, log) {
                 );
         });
 
-        log('desktop', 'Sending AJAX request 2');
+        log('jim', 'send', 'Sending AJAX request 2');
         $.get('/example/response.html', function(data, status, xhr) {
-            log('desktop', 'Data received');
+            log('jim', 'receive', 'Data received');
             $ajaxContainer
                 .append(
                     '<p><strong>desktop' +
