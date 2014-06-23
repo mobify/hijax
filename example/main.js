@@ -36,9 +36,13 @@ define(['hijax', 'logger', 'desktop'], function(hiJax, log, desktop) {
             receive: function(xhr) {
                 log(this.name, 'receive', 'Receiving data...');
             },
+
+            load: function(xhr) {
+                log(this.name, 'receive', 'Data loaded');
+            },
+
             // Request completed (desktop listener has finished processing it)
             complete: function(data, xhr) {
-                // Fix shitty tabbing
                 // var dHandler = xhr._originalHandler.toString()
                 //     .replace(/\t/g, '  ');
                 // log(this.name, 'Desktop handler: ',
@@ -49,7 +53,7 @@ define(['hijax', 'logger', 'desktop'], function(hiJax, log, desktop) {
 
     // Multiple listeners can be set on the same proxy
     hiJax.addListener('proxy1', 'complete', function(data, xhr) {
-        log(this.name, 'receive', 'Request complete.');
+        log(this.name, 'receive', 'Request complete (2nd listener).');
     });
 
     // Instantiate another proxy

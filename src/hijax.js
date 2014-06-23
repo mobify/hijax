@@ -112,6 +112,9 @@
         // Store URL
         this.url = url;
 
+        this.rscProxied = false;
+        this.onLoadProxied = false;
+
         hijax.active++;
         hijax.dispatch('beforeSend', this);
     });
@@ -122,46 +125,76 @@
         var receiveHandler = function() {
             hijax.dispatch('receive', xhr);
         };
+        var loadHandler = function() {
+            hijax.dispatch('load', xhr);
+        };
         var completeHandler = function() {
-            // Might be triggered before complete, on RSC
-            if (xhr.readyState === states.DONE) {
-                hijax.dispatch('complete', xhr, function() {
-                    hijax.active--;
-                });
+            hijax.dispatch('complete', xhr, function() {
+                hijax.active--;
+            });
+        };
+
+        var proxyDesktopHandlers = function() {
+            if (xhr.rscProxied && xhr.onLoadProxied) { return; }
+
+            if (typeof xhr.onreadystatechange === 'function') {
+                xhr._originalRSCHandler = xhr.onreadystatechange;
+                xhr.rscProxied = true;
+
+                xhr.onreadystatechange = proxyFunction(
+                    xhr.onreadystatechange,
+                    function() {
+                        if (xhr.readyState === states.DONE) {
+                            loadHandler();
+                        }
+                    },
+                    function() {
+                        if (xhr.readyState === states.DONE) {
+                            completeHandler();
+                        }
+                    }
+                );
+            }
+
+            if (typeof xhr.onload === 'function') {
+                // Make original XHR handler available to subscribers
+                xhr._originalOnLoadHandler = xhr.onload;
+                xhr.onLoadProxied = true;
+
+                xhr.onload = proxyFunction(
+                    xhr.onload,
+                    loadHandler,
+                    completeHandler
+                );
             }
         };
 
-        var proxyListeners = function() {
-            if (xhr.proxied) { return; }
-
-            // Desktop AJAX might be using onRSC, onload, or listening to the
-            // XHR rsc event
-            if (typeof xhr.onreadystatechange === 'function') {
-                // Make original XHR handler available to subscribers
-                xhr._originalHandler = xhr.onreadystatechange;
-                xhr.onreadystatechange = proxyFunction(
-                    xhr.onreadystatechange, receiveHandler, completeHandler
-                );
-                xhr.proxied = true;
-            } else if (typeof xhr.onload === 'function') {
-                // Make original XHR handler available to subscribers
-                xhr._originalHandler = xhr.onload;
-                xhr.onload = proxyFunction(
-                    xhr.onload, receiveHandler, completeHandler
-                );
-                xhr.proxied = true;
-            } else if (xhr.readyState === states.HEADERS_RECEIVED) {
+        var stateChangeHandler = function() {
+            // In some cases, handlers are set later by the library,
+            // e.g jQuery 2.1. Try to intercept them
+            if (xhr.readyState === states.HEADERS_RECEIVED) {
                 receiveHandler();
             } else if (xhr.readyState === states.DONE) {
+                // This is silly, but since we couldn't find a desktop proxy to
+                // proxy, we just fire these simultaneously
+                // TODO: Find a case where this happens, and do this more
+                // elegantly. Possibly by proxying the desktop event handler
+                loadHandler();
                 completeHandler();
             }
         };
 
-        xhr.addEventListener(
-            'readystatechange',
-            proxyListeners,
-            false
-        );
+        // Try to set proxies for desktop RSC/onload if they're present
+        proxyDesktopHandlers();
+
+        if (!xhr.rscProxied && !xhr.onLoadProxied) {
+            // We were unable to find an onload or onRSC handler to proxy
+            xhr.addEventListener(
+                'readystatechange',
+                stateChangeHandler,
+                false
+            );
+        }
     });
 
     return hijax;

@@ -27,6 +27,7 @@
         this.callbacks = {
             beforeSend: [],
             receive: [],
+            load: [],
             complete: []
         };
 
@@ -140,7 +141,7 @@
             return responses[responseHeaderType];
         } else if (parsers[responseHeaderType]) {
             // We can convert this data type using a parser
-            return parsers[responseHeaderType](xhr.response);
+            return parsers[responseHeaderType](xhr.response || xhr.responseText);
         }
 
         // TODO: Injecting scripts into DOM?
@@ -156,7 +157,7 @@
         if (!this.condition(xhr.url)) { return; }
 
         for (var ctr = 0; ctr < eventCallbacks.length; ctr++) {
-            if (event === 'complete') {
+            if (event === 'complete' || event === 'load') {
                 // Include parsed data
                 eventCallbacks[ctr].call(this, this.parseResponse(xhr), xhr);
             } else {
