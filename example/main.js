@@ -37,7 +37,7 @@ define(['hijax', 'logger', 'desktop'], function(hiJax, log, desktop) {
                 log(this.name, 'receive', 'Receiving data...');
             },
 
-            load: function(xhr) {
+            load: function(data, xhr) {
                 log(this.name, 'receive', 'Data loaded');
             },
 
