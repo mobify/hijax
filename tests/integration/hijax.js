@@ -5,7 +5,7 @@ function(hijax, jQuery) {
     beforeEach(function() {
         hijax
             .set('home', '/example/response.json', {
-                load: function(data, xhr) {
+                receive: function(data, xhr) {
                     foo = 'baz';
                 }
             });

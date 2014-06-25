@@ -30,17 +30,12 @@ define(['hijax', 'logger', 'desktop'], function(hiJax, log, desktop) {
             {
             // Request is being sent
             beforeSend: function(xhr) {
-                log(this.name, 'send', 'Intercepting send...');
+                log(this.name, 'send', 'Intercepting send.');
             },
-            // Receiving response
-            receive: function(xhr) {
-                log(this.name, 'receive', 'Receiving data...');
+            // Received response data
+            receive: function(data, xhr) {
+                log(this.name, 'receive', 'Receiving data.');
             },
-
-            load: function(data, xhr) {
-                log(this.name, 'receive', 'Data loaded');
-            },
-
             // Request completed (desktop listener has finished processing it)
             complete: function(data, xhr) {
                 // var dHandler = xhr._originalHandler.toString()

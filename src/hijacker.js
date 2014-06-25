@@ -27,7 +27,6 @@
         this.callbacks = {
             beforeSend: [],
             receive: [],
-            load: [],
             complete: []
         };
 
@@ -157,7 +156,7 @@
         if (!this.condition(xhr.url)) { return; }
 
         for (var ctr = 0; ctr < eventCallbacks.length; ctr++) {
-            if (event === 'complete' || event === 'load') {
+            if (event === 'complete' || event === 'receive') {
                 // Include parsed data
                 eventCallbacks[ctr].call(this, this.parseResponse(xhr), xhr);
             } else {
