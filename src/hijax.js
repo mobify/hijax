@@ -191,12 +191,16 @@
             else {
                 // This is silly, but since we couldn't find a desktop proxy to
                 // proxy, we just fire these simultaneously
+                // Example: jQuery 1.3.2
+                //
                 // TODO: Find a case where this happens, and do this more
                 // elegantly. Possibly by proxying the desktop event handler
-                console.warn('Unable to proxy desktop handler. ' +
-                    'Firing Hijax receive and complete handlers.');
-                receiveHandler();
-                completeHandler();
+                if (xhr.readyState === states.DONE) {
+                    console.warn('Unable to proxy desktop handler. ' +
+                        'Firing Hijax receive and complete handlers.');
+                    receiveHandler();
+                    completeHandler();
+                }
             }
         };
 

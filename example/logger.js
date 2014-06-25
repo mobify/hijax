@@ -1,4 +1,4 @@
-define(['jquery'], function($) {
+define(['jquery132'], function($) {
     var $log = $('.log');
     var started = Date.now();
 

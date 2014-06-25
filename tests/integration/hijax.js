@@ -1,4 +1,4 @@
-define(['hijax','jquery'],
+define(['hijax','jquery132'],
 function(hijax, jQuery) {
     var foo;
 

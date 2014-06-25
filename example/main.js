@@ -7,11 +7,15 @@ require.config({
         'logger': 'example/logger',
         'desktop': 'example/desktop',
 
-        'jquery': 'bower_components/jquery/dist/jquery'
+        'jquery211': 'bower_components/jquery211/dist/jquery',
+        'jquery132': 'bower_components/jquery132/jquery'
     },
     shim: {
-        'jquery': {
+        'jquery211': {
             exports: '$'
+        },
+        'jquery132': {
+            exports: 'jQuery'
         }
     }
 });
@@ -38,10 +42,6 @@ define(['hijax', 'logger', 'desktop'], function(hiJax, log, desktop) {
             },
             // Request completed (desktop listener has finished processing it)
             complete: function(data, xhr) {
-                // var dHandler = xhr._originalHandler.toString()
-                //     .replace(/\t/g, '  ');
-                // log(this.name, 'Desktop handler: ',
-                //     '<pre>' + dHandler + '</pre>');
                 log(this.name, 'receive', 'Request complete.');
             }
         });
@@ -59,4 +59,5 @@ define(['hijax', 'logger', 'desktop'], function(hiJax, log, desktop) {
     });
 
     log('hijax', '', 'Proxies set');
+    desktop();
 });
