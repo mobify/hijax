@@ -123,11 +123,9 @@
         var xhr = this;
 
         var receiveHandler = function() {
-            if (xhr.readyState !== states.DONE) { return; }
             hijax.dispatch('receive', xhr);
         };
         var completeHandler = function() {
-            if (xhr.readyState !== states.DONE) { return; }
             hijax.dispatch('complete', xhr, function() {
                 hijax.active--;
             });
@@ -136,76 +134,33 @@
         /*
          * Ways to intercept AJAX responses:
          * 1. During send, proxy the desktop handler for load/RSC
-         * 2. If no desktop handler is found, we just listen for the RSC event,
-         * and fire our handlers. In this case, we lose the capability of
-         * proxying the desktop function.
+         * 2. If no desktop handler is found, we just fire our handlers. In
+         * this case, we lose the capability of proxying the desktop function.
          */
-        var proxyDesktopHandlers = function() {
-            if (xhr.rscProxied || xhr.onLoadProxied) { return; }
+        if (typeof xhr.onload === 'function') {
+            // Make original XHR handler available to subscribers
+            xhr._originalOnLoadHandler = xhr.onload;
+            xhr.onLoadProxied = true;
 
-            if (typeof xhr.onload === 'function') {
-                // Make original XHR handler available to subscribers
-                xhr._originalOnLoadHandler = xhr.onload;
-                xhr.onLoadProxied = true;
+            xhr.onload = proxyFunction(
+                xhr.onload,
+                receiveHandler,
+                completeHandler
+            );
+        } else if (typeof xhr.onreadystatechange === 'function') {
+            xhr._originalRSCHandler = xhr.onreadystatechange;
+            xhr.rscProxied = true;
 
-                xhr.onload = proxyFunction(
-                    xhr.onload,
-                    receiveHandler,
-                    completeHandler
-                );
-            } else if (typeof xhr.onreadystatechange === 'function') {
-                xhr._originalRSCHandler = xhr.onreadystatechange;
-                xhr.rscProxied = true;
-
-                // Receive fires continuosly as it receives data, so we have to
-                // ensure data reception is complete
-                xhr.onreadystatechange = proxyFunction(
-                    xhr.onreadystatechange,
-                    receiveHandler,
-                    completeHandler
-                );
-            } else {
-                // We were unable to find an onload or onRSC handler to proxy
-                xhr.addEventListener(
-                    'readystatechange',
-                    stateChangeHandler,
-                    false
-                );
-            }
-        };
-
-        var stateChangeHandler = function() {
-            // We've managed to intercept the handlers, so no need to continue
-            // listening to the event
-            if (xhr.rscProxied || xhr.onLoadProxied) {
-                xhr.removeEventListener('readystatechange', stateChangeHandler);
-                return;
-            }
-
-            // In some cases, handlers are set later by the library,
-            // e.g jQuery 2.1. Try to intercept them
-            if (typeof xhr.onreadystatechange === 'function' ||
-                typeof xhr.onload === 'function') {
-                proxyDesktopHandlers();
-            }
-            else {
-                // This is silly, but since we couldn't find a desktop proxy to
-                // proxy, we just fire these simultaneously
-                // Example: jQuery 1.3.2
-                //
-                // TODO: Find a case where this happens, and do this more
-                // elegantly. Possibly by proxying the desktop event handler
-                if (xhr.readyState === states.DONE) {
-                    console.warn('Unable to proxy desktop handler. ' +
-                        'Firing Hijax receive and complete handlers.');
-                    receiveHandler();
-                    completeHandler();
-                }
-            }
-        };
-
-        // Try to set proxies for desktop RSC/onload if they're present
-        proxyDesktopHandlers();
+            xhr.onreadystatechange = proxyFunction(
+                xhr.onreadystatechange,
+                receiveHandler,
+                completeHandler
+            );
+        } else {
+            // No handlers found
+            console.warn('Unable to proxy desktop handlers');
+            xhr.onload = proxyFunction(completeHandler, receiveHandler);
+        }
     });
 
     return hijax;
