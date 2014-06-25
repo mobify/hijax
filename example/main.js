@@ -42,13 +42,13 @@ define(['hijax', 'logger', 'desktop'], function(hiJax, log, desktop) {
             },
             // Request completed (desktop listener has finished processing it)
             complete: function(data, xhr) {
-                log(this.name, 'receive', 'Request complete.');
+                log(this.name, 'receive', 'Request complete [listener 1].');
             }
         });
 
     // Multiple listeners can be set on the same proxy
     hiJax.addListener('proxy1', 'complete', function(data, xhr) {
-        log(this.name, 'receive', 'Request complete (2nd listener).');
+        log(this.name, 'receive', 'Request complete [listener 2].');
     });
 
     // Instantiate another proxy
