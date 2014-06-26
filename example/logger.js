@@ -1,16 +1,14 @@
-define(['jquery211'], function($) {
-    var $log = $('.log');
+define(['jquery132'], function($) {
     var started = Date.now();
 
-    return function() {
-        var caller = arguments[0];
-        var classes = arguments.length > 2 &&
-            typeof arguments[1] === 'string' ? arguments[1] : '';
-        var args = [].slice.call(arguments, classes.length ? 2 : 1);
+    return function(caller, request, eventName) {
+        var args = [].slice.call(arguments, 3);
         
         var timestamp = Date.now() - started;
 
-        $log.append('<h3><span class="' + classes + ' ' + caller + '">' +
+        var $log = $('.log[data-request="' + request + '"]');
+
+        $log.append('<h3><span class="' + eventName + ' ' + caller + '">' +
             caller + '</span><span class="timestamp">' + timestamp +
             'ms</span></h3>' +
             args.join(' ') + '</p>');

@@ -1,10 +1,10 @@
-define(['jquery211', 'logger'], function($, log) {
+define(['jquery132', 'logger'], function($, log) {
     return function() {
         var $ajaxContainer = $('#ajax-container');
 
-        log('desktop [1]', 'send', 'Sending request.');
+        log('desktop1', 1, 'send', 'Sending request.');
         $.get('/example/response.json', function(data, status, xhr) {
-            log('desktop [1]', 'receive', 'Data received.');
+            log('desktop1', 1, 'receive', 'Processing data.');
             $ajaxContainer
                 .append(
                     '<p><strong>desktop' +
@@ -12,9 +12,9 @@ define(['jquery211', 'logger'], function($, log) {
                 );
         });
 
-        log('desktop [2]', 'send', 'Sending request.');
+        log('desktop2', 2, 'send', 'Sending request.');
         $.get('/example/response.html', function(data, status, xhr) {
-            log('desktop [2]', 'receive', 'Data received.');
+            log('desktop2', 2, 'receive', 'Processing data.');
             $ajaxContainer
                 .append(
                     '<p><strong>desktop' +

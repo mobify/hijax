@@ -1,17 +1,21 @@
-define(['hijax','jquery211'],
-function(hijax, jQuery) {
-    var foo;
+define(['hijax', 'jquery132', 'jQ132Adapter'],
+function(Hijax, jQuery, jQueryAdapter) {
+    describe('Hijax proxying tests  (jQuery 1.3.2)', function() {
+        var foo;
+        var hijax = new Hijax(jQueryAdapter);
 
-    beforeEach(function() {
         hijax
             .set('home', '/example/response.json', {
                 receive: function(data, xhr) {
+                    console.log('Receive!');
                     foo = 'baz';
+                },
+                complete: function(data, xhr) {
+                    foo = 'complete';
+                    console.log('Complete!');
                 }
             });
-    });
-
-    describe('Hijax proxying tests', function() {
+            
         it('proxies the AJAX request', function(done) {
             jQuery
                 .ajax({
@@ -24,6 +28,13 @@ function(hijax, jQuery) {
                         done();
                     }
                 });
+        });
+
+        it('fires the complete event after desktop', function(done) {
+            setTimeout(function() {
+                assert.equal(foo, 'complete', 'Complete fires after desktop');
+                done();
+            });
         });
     });
 });

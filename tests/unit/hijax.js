@@ -1,13 +1,9 @@
 define(['hijax'],
 function(Hijax) {
+    var hijax = new Hijax();
     describe('Hijax Tests', function() {
-        it('creates a global Hijax instance', function() {
-            assert.equal(typeof Hijax, 'object', 'Hijax created');
-        });
-
-        it('provides a reference to the global singleton', function() {
-            assert.equal(window.hijax, Hijax,
-                'Singleton instance is the same as the global instance');
+        it('creates a Hijax constructor', function() {
+            assert.equal(typeof hijax, 'object', 'Hijax created');
         });
     });
 });
