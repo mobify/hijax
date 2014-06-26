@@ -1,0 +1,11 @@
+machine:
+  node:
+    version: 0.10.21
+
+dependencies:
+    override:
+        - npm install
+
+test:
+    override:
+        - ./node_modules/mocha/bin/mocha --timeout 20000
