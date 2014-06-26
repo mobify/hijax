@@ -1,16 +1,46 @@
-/*
-TODO: Test with devices
-TODO: Test with multiple versions of Zepto, jQuery, Prototype, etc.
-*/
-define([
-    'src/utils',
-    'src/hijacker'
-],
-function(utils, Hijacker) {
-    if (window.hijax) { return window.hijax; }
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define('hijax',['hijacker'], factory);
+    } else if (typeof exports === 'object') {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        module.exports = factory(require('hijacker'));
+    } else {
+        // Browser globals (root is window)
+        root.hijax = factory(root.Hijacker);
+    }
+}(this, function(Hijacker) {
+    /**
+     * Proxy destFn, so that beforeFn runs before it, and afterFn runs after it
+     *
+     * @destFn {Function}:      Target
+     * @beforeFn {Function}:    (optional) Runs before destFn
+     * @afterFn {Function}:     (optional) Runs after destFn
+     */
+    function proxyFunction(destFn, beforeFn, afterFn) {
+        var proxied = function() {
+            var result;
+
+            if (typeof destFn !== 'function') {
+                throw destFn + ' is not a function, and cannot be proxied!';
+            }
+            if (typeof beforeFn === 'function') {
+                beforeFn.apply(this, arguments);
+            }
+            result = destFn.apply(this, arguments);
+            if (typeof afterFn === 'function') {
+                afterFn.apply(this, arguments);
+            }
+
+            return result;
+        };
+
+        return proxied;
+    }
 
     // XHR states
-    var hijax;
     var states = {
         UNSENT: 0,
         OPENED: 1,
@@ -19,11 +49,18 @@ function(utils, Hijacker) {
         DONE: 4
     };
 
-    function Hijax() {
+    function Hijax(adapter) {
         this.proxies = {};
+        this.adapter = adapter;
 
         // Active connections
         this.active = 0;
+
+        if (!adapter) {
+            this.proxyXHREvents();
+        } else {
+            adapter.init.call(this);
+        }
     }
 
     Hijax.prototype.getXHRMethod = function(method) {
@@ -35,7 +72,7 @@ function(utils, Hijacker) {
     };
 
     Hijax.prototype.proxyXhrMethod = function(method, before, after) {
-        var proxy = utils.proxy(this.getXHRMethod(method), before, after);
+        var proxy = proxyFunction(this.getXHRMethod(method), before, after);
         this.setXHRMethod(method, proxy);
     };
 
@@ -47,9 +84,9 @@ function(utils, Hijacker) {
         return proxy;
     };
 
-    Hijax.prototype.set = function(name, condition, cbs) {
+    Hijax.prototype.set = function(name, condition, cbs, options) {
         // Setter
-        return this.createProxy(name, condition, cbs);
+        return this.createProxy(name, condition, cbs, options);
     };
 
     Hijax.prototype.addListener = function(name, method, cb) {
@@ -72,60 +109,65 @@ function(utils, Hijacker) {
         typeof callback === 'function' && callback();
     };
 
-    hijax = window.hijax = new Hijax();
+    // Can be overridden by an adapter
+    Hijax.prototype.proxyXHREvents = function() {
+        var hijax = this;
 
-    // Bind events
-    hijax.proxyXhrMethod('open', function(method, url) {
-        // Store URL
-        this.url = url;
+        hijax.proxyXhrMethod('open', function(method, url) {
+            // Store URL
+            this.url = url;
 
-        hijax.active++;
-        hijax.dispatch('beforeSend', this);
-    });
+            this.rscProxied = false;
+            this.onLoadProxied = false;
 
-    hijax.proxyXhrMethod('send', function() {
-        var xhr = this;
+            hijax.active++;
+            hijax.dispatch('beforeSend', this);
+        });
 
-        var receiveHandler = function() {
-            hijax.dispatch('receive', xhr);
-        };
-        var completeHandler = function() {
-            // Might be triggered before complete, on RSC
-            if (xhr.readyState === states.DONE) {
+        hijax.proxyXhrMethod('send', function() {
+            var xhr = this;
+
+            var receiveHandler = function() {
+                hijax.dispatch('receive', xhr);
+            };
+            var completeHandler = function() {
                 hijax.dispatch('complete', xhr, function() {
                     hijax.active--;
                 });
-            }
-        };
+            };
 
-        var proxyListeners = function() {
-            if (xhr.proxied) { return; }
+            /*
+             * Ways to intercept AJAX responses:
+             * 1. During send, proxy the desktop handler for load/RSC
+             * 2. If no desktop handler is found, we just fire our handlers. In
+             * this case, we lose the capability of proxying the desktop function.
+             */
+            if (typeof xhr.onload === 'function') {
+                // Make original XHR handler available to subscribers
+                xhr._originalOnLoadHandler = xhr.onload;
+                xhr.onLoadProxied = true;
 
-            // Desktop AJAX might be using onRSC, onload, or listening to the 
-            // XHR rsc event
-            if (typeof xhr.onreadystatechange === 'function') {
-                xhr.onreadystatechange = utils.proxy(
-                    xhr.onreadystatechange, receiveHandler, completeHandler
+                xhr.onload = proxyFunction(
+                    xhr.onload,
+                    receiveHandler,
+                    completeHandler
                 );
-                xhr.proxied = true;
-            } else if(typeof xhr.onload === 'function') {
-                xhr.onload = utils.proxy(
-                    xhr.onload, receiveHandler, completeHandler
+            } else if (typeof xhr.onreadystatechange === 'function') {
+                xhr._originalRSCHandler = xhr.onreadystatechange;
+                xhr.rscProxied = true;
+
+                xhr.onreadystatechange = proxyFunction(
+                    xhr.onreadystatechange,
+                    receiveHandler,
+                    completeHandler
                 );
-                xhr.proxied = true;
-            } else if (xhr.readyState === states.LOADING) {
-                receiveHandler();
-            } else if (xhr.readyState === states.DONE) {
-                completeHandler();
+            } else {
+                // No handlers found
+                console.warn('Unable to proxy desktop handlers');
+                xhr.onload = proxyFunction(completeHandler, receiveHandler);
             }
-        };
+        });
+    };
 
-        xhr.addEventListener(
-            'readystatechange',
-            proxyListeners,
-            false
-        );
-    });
-
-    return hijax;
-});
+    return Hijax;
+}));

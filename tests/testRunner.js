@@ -8,7 +8,8 @@ require(['config'], function(){
             'tests/unit/hijax',
             'tests/unit/hijacker',
 
-            'tests/integration/hijax'
+            'tests/integration/jquery-1.3.2',
+            'tests/integration/jquery-2.1.1'
         ];
 
         require(tests, function() {

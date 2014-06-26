@@ -1,0 +1,42 @@
+body {
+    font-family: Helvetica;
+    font-size: 14px;
+    color: #000;
+}
+.proxy1:before, .proxy2:before {
+    content: '⇆ ';
+}
+
+.proxy1 {
+    color: #FF9084;
+}
+.proxy2 {
+    color: #6ee85a;
+}
+.desktop1, .desktop2 {
+    color: #7abfcf;
+}
+.log {
+    border: 1px solid #eaeaea;
+    padding: 10px;
+    overflow: scroll
+}
+.timestamp {
+    font-size: 0.9em;
+    float: right;
+}
+
+pre {
+    height: 20px;
+    padding: 20px 20px 20px 20px;
+    margin: 0 auto;
+    overflow: scroll;
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%,rgba(228,228,228,0.15) 76%,rgba(219,219,219,0.29) 100%); /* W3C */
+}
+h3 {
+    display: block;
+    margin: 10px 0 5px 0;
+    border-bottom: 1px solid #eaeaea;
+    font-size: 0.9em;
+    font-weight: normal;
+}

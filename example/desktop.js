@@ -1,11 +1,25 @@
-define(['jquery'], function($) {
+define(['jquery132', 'logger'], function($, log) {
     return function() {
-        $.get('/example/myUrl', function(data, status, xhr) {
-            var parsed = JSON.parse(data);
-            var $ajaxContainer = $('#ajax-container');
+        var $ajaxContainer = $('#ajax-container');
 
-            $ajaxContainer.append('<p class="x-desktop"><strong>desktop' +
-                ': </strong>Received data: ' + data + '</p>');
+        log('desktop1', 1, 'send', 'Sending request.');
+        $.get('/example/response.json', function(data, status, xhr) {
+            log('desktop1', 1, 'receive', 'Processing data.');
+            $ajaxContainer
+                .append(
+                    '<p><strong>desktop' +
+                    ': </strong>Received data: ' + JSON.stringify(data) + '.</p>'
+                );
+        });
+
+        log('desktop2', 2, 'send', 'Sending request.');
+        $.get('/example/response.html', function(data, status, xhr) {
+            log('desktop2', 2, 'receive', 'Processing data.');
+            $ajaxContainer
+                .append(
+                    '<p><strong>desktop' +
+                    ': </strong>Received data: <pre>' + data + '</pre>.</p>'
+                );
         });
     };
 });

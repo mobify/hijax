@@ -1,4 +1,4 @@
 node_modules
 localSettings.json
-dist/
 .sass-cache/
+bower_components

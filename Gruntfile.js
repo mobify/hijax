@@ -12,7 +12,8 @@ module.exports = function(grunt) {
 
     var npmTasks = [
         'grunt-contrib-connect',
-        'grunt-mocha-phantomjs'
+        'grunt-mocha-phantomjs',
+        'grunt-requirejs'
     ];
 
     npmTasks.forEach(function(taskName) {
@@ -57,6 +58,7 @@ module.exports = function(grunt) {
 
     grunt.initConfig(config);
 
+    grunt.registerTask('build', ['jshint', 'jscs', 'requirejs:dev', 'requirejs:prod']);
     grunt.registerTask('serve', ['jshint:dev', 'jscs', 'connect:serve:keepalive']);
     grunt.registerTask('test', ['connect:serve', 'mocha_phantomjs']);
 };

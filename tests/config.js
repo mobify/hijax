@@ -3,7 +3,14 @@ require.config({
     paths: {
         'chai': 'node_modules/chai/chai',
         'mocha': 'node_modules/mocha/mocha',
-        'jquery': 'bower_components/jquery/dist/jquery'
+
+        'jquery211': 'bower_components/jquery211/dist/jquery',
+        'jquery132': 'bower_components/jquery132/jquery',
+
+        'jQ132Adapter': '../adapters/jquery.1.3.2',
+
+        'hijax': '../src/hijax',
+        'hijacker': '../src/hijacker'
     },
     'shim': {
         'mocha': {
@@ -12,7 +19,10 @@ require.config({
                 return this.mocha;
             }
         },
-        'jquery': {
+        'jquery211': {
+            exports: 'jQuery'
+        },
+        'jquery132': {
             exports: 'jQuery'
         }
     }
