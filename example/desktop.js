@@ -1,4 +1,4 @@
-define(['jquery132', 'logger'], function($, log) {
+define(['jquery', 'logger'], function($, log) {
     return function() {
         var $ajaxContainer = $('#ajax-container');
 
