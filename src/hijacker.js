@@ -111,8 +111,8 @@
 
     // Check which response types have been provided by the server
     Hijacker.prototype.getResponseHeaderType = function(xhr) {
-        var detectedTypes = [];
-        var contentType = this.getResponseHeader(xhr, 'Content-Type');
+        var contentType = this.getResponseHeader(xhr, 'Content-Type') ||
+            'text/html';
         var knownTypes = {
             'html': /html/,
             'json': /json/,
@@ -121,7 +121,8 @@
 
         // Check if this is a known data type, and add it to the stack
         for (var type in knownTypes) {
-            if (knownTypes[type] && knownTypes[type].test(contentType)) {
+            if (knownTypes.hasOwnProperty(type) &&
+                knownTypes[type].test(contentType)) {
                 return type;
             }
         }

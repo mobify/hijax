@@ -1,4 +1,4 @@
-define(['jquery132'], function($) {
+define(['jquery'], function($) {
     var started = Date.now();
 
     return function(caller, request, eventName) {

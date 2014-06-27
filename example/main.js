@@ -5,29 +5,30 @@ require.config({
         'hijacker': '../src/hijacker',
 
         // Adapters
-        'jQ132Adapter': '../adapters/jquery.1.3.2',
+        'adapter': '../adapters/jquery.1.3.2',
 
         'logger': 'example/logger',
         'desktop': 'example/desktop',
 
-        'jquery211': 'bower_components/jquery211/dist/jquery',
-        'jquery132': 'bower_components/jquery132/jquery'
+        // 2.1.1
+        // 'jquery': 'bower_components/jquery211/dist/jquery',
+        // 1.3.2
+        'jquery': 'bower_components/jquery132/jquery'
     },
     shim: {
-        'jquery211': {
+        'jquery': {
             exports: '$'
-        },
-        'jquery132': {
-            exports: 'jQuery'
         }
     }
 });
 
 define([
-    'hijax', 'logger', 'desktop', 'jQ132Adapter'
+    'hijax', 'logger', 'desktop', 'adapter'
 ],
-function(Hijax, log, desktop, jQueryAdapter) {
-    var hijax = new Hijax(jQueryAdapter);
+function(Hijax, log, desktop, adapter) {
+    // Uncomment when using 1.3.2
+    // var hijax = new Hijax(adapter);
+    var hijax = new Hijax();
 
     // URL match as function
     var condition = function(url) {

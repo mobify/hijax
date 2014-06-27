@@ -41,8 +41,8 @@
             });
 
             // Complete
-            jQuery(document).bind('ajaxComplete', function() {
-                hijax.dispatch('complete', arguments[2], function() {
+            jQuery(document).bind('ajaxComplete', function(ev, xhr, jqXHR) {
+                hijax.dispatch('complete', xhr, function() {
                     hijax.active--;
                 });
             });
