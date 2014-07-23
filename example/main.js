@@ -11,9 +11,9 @@ require.config({
         'desktop': 'example/desktop',
 
         // 2.1.1
-        // 'jquery': 'bower_components/jquery211/dist/jquery',
+        'jquery': 'bower_components/jquery211/dist/jquery',
         // 1.3.2
-        'jquery': 'bower_components/jquery132/jquery'
+        // 'jquery': 'bower_components/jquery132/jquery'
     },
     shim: {
         'jquery': {
@@ -52,6 +52,14 @@ function(Hijax, log, desktop, adapter) {
             // Request completed (desktop listener has finished processing it)
             complete: function(data, xhr) {
                 log(this.name, 1, 'receive', 'Request complete [listener 1].');
+            }
+        }, {
+            dataParsers: {
+                // Custom parser for json data type
+                // Default parsers: json, text, html, xml
+                json: function(data) {
+                    return JSON.parse(data);
+                }
             }
         });
 

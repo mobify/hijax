@@ -76,8 +76,8 @@
         this.setXHRMethod(method, proxy);
     };
 
-    Hijax.prototype.createProxy = function(name, condition, cbs) {
-        var proxy = new Hijacker(name, condition, cbs);
+    Hijax.prototype.createProxy = function(name, condition, cbs, options) {
+        var proxy = new Hijacker(name, condition, cbs, options);
 
         this.proxies[name] = proxy;
 
