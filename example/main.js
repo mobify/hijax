@@ -38,7 +38,7 @@ function(Hijax, log, desktop, adapter) {
     // Instantiate proxy
     hijax
         .set(
-            'proxy1',
+            'homeJSON',
             '/example/response.json',
             {
             // Request is being sent
@@ -64,12 +64,12 @@ function(Hijax, log, desktop, adapter) {
         });
 
     // Multiple listeners can be set on the same proxy
-    hijax.addListener('proxy1', 'complete', function(data, xhr) {
+    hijax.addListener('homeJSON', 'complete', function(data, xhr) {
         log(this.name, 1, 'receive', 'Request complete [listener 2].');
     });
 
     // Instantiate another proxy
-    hijax.set('proxy2', condition, {
+    hijax.set('homeHTML', condition, {
         beforeSend: function(xhr) {
             log(this.name, 2, 'send', 'Intercepting send.');
         },
