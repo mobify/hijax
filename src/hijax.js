@@ -127,10 +127,24 @@
         hijax.proxyXhrMethod('send', function() {
             var xhr = this;
 
+            // We can't just depend on the readyState being 4 (complete), as desktop
+            // libraries sometimes set readyState to 0 after processing
+            // (so receive will fire, complete won't). Instead, we just make sure
+            // the data isn't incomplete (states 1, 2, 3)
+            function isProcessing(xhr) {
+                return xhr.readyState >= 1 && xhr.readyState <= 3;
+            }
+
             var receiveHandler = function() {
+                // In case we're coming through the RSCHandler
+                if (isProcessing(xhr)) { return; }
+
                 hijax.dispatch('receive', xhr);
             };
             var completeHandler = function() {
+                // In case we're coming through the RSCHandler
+                if (isProcessing(xhr)) { return; }
+
                 hijax.dispatch('complete', xhr, function() {
                     hijax.active--;
                 });
