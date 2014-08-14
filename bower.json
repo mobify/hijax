@@ -3,5 +3,9 @@
     "version": "0.1.2",
     "dependencies": {
         "requirejs": "2.1.11"
+    },
+    "devDependencies": {
+        "jquery211": "jquery#2.1.1",
+        "jquery132": "jquery#1.3.2"
     }
 }
