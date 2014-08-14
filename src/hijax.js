@@ -140,7 +140,8 @@
                 if (isProcessing(xhr)) { return; }
 
                 hijax.dispatch('receive', xhr);
-            };
+            }
+
             function completeHandler() {
                 // In case we're coming through the RSCHandler
                 if (isProcessing(xhr)) { return; }
@@ -148,7 +149,7 @@
                 hijax.dispatch('complete', xhr, function() {
                     hijax.active--;
                 });
-            };
+            }
 
             /*
              * Ways to intercept AJAX responses:
