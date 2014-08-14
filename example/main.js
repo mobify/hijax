@@ -11,9 +11,9 @@ require.config({
         'desktop': 'example/desktop',
 
         // 2.1.1
-        // 'jquery': 'bower_components/jquery211/dist/jquery',
+        'jquery': 'bower_components/jquery211/dist/jquery',
         // 1.3.2
-        'jquery': 'bower_components/jquery132/jquery'
+        // 'jquery': 'bower_components/jquery132/jquery'
     },
     shim: {
         'jquery': {
@@ -38,7 +38,7 @@ function(Hijax, log, desktop, adapter) {
     // Instantiate proxy
     hijax
         .set(
-            'proxy1',
+            'homeJSON',
             '/example/response.json',
             {
             // Request is being sent
@@ -53,15 +53,23 @@ function(Hijax, log, desktop, adapter) {
             complete: function(data, xhr) {
                 log(this.name, 1, 'receive', 'Request complete [listener 1].');
             }
+        }, {
+            dataParsers: {
+                // Custom parser for json data type
+                // Default parsers: json, text, html, xml
+                json: function(data) {
+                    return JSON.parse(data);
+                }
+            }
         });
 
     // Multiple listeners can be set on the same proxy
-    hijax.addListener('proxy1', 'complete', function(data, xhr) {
+    hijax.addListener('homeJSON', 'complete', function(data, xhr) {
         log(this.name, 1, 'receive', 'Request complete [listener 2].');
     });
 
     // Instantiate another proxy
-    hijax.set('proxy2', condition, {
+    hijax.set('homeHTML', condition, {
         beforeSend: function(xhr) {
             log(this.name, 2, 'send', 'Intercepting send.');
         },

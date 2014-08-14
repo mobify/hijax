@@ -76,25 +76,25 @@
         this.setXHRMethod(method, proxy);
     };
 
-    Hijax.prototype.createProxy = function(name, condition, cbs) {
-        var proxy = new Hijacker(name, condition, cbs);
+    Hijax.prototype.createProxy = function(name, condition, callbacks, options) {
+        var proxy = new Hijacker(name, condition, callbacks, options);
 
         this.proxies[name] = proxy;
 
         return proxy;
     };
 
-    Hijax.prototype.set = function(name, condition, cbs, options) {
+    Hijax.prototype.set = function(name, condition, callbacks, options) {
         // Setter
-        return this.createProxy(name, condition, cbs, options);
+        return this.createProxy(name, condition, callbacks, options);
     };
 
-    Hijax.prototype.addListener = function(name, method, cb) {
+    Hijax.prototype.addListener = function(name, method, callback) {
         // Getter
         if (!(name in this.proxies)) {
             throw name + ' proxy does not exist!';
         }
-        this.proxies[name].addListener(method, cb);
+        this.proxies[name].addListener(method, callback);
     };
 
     // Dispatch current event to all listeners
@@ -127,14 +127,29 @@
         hijax.proxyXhrMethod('send', function() {
             var xhr = this;
 
-            var receiveHandler = function() {
+            // We can't just depend on the readyState being 4 (complete), as desktop
+            // libraries sometimes set readyState to 0 after processing
+            // (so receive will fire, complete won't). Instead, we just make sure
+            // the data isn't incomplete (states 1, 2, 3)
+            function isProcessing(xhr) {
+                return xhr.readyState >= 1 && xhr.readyState <= 3;
+            }
+
+            function receiveHandler() {
+                // In case we're coming through the RSCHandler
+                if (isProcessing(xhr)) { return; }
+
                 hijax.dispatch('receive', xhr);
-            };
-            var completeHandler = function() {
+            }
+
+            function completeHandler() {
+                // In case we're coming through the RSCHandler
+                if (isProcessing(xhr)) { return; }
+
                 hijax.dispatch('complete', xhr, function() {
                     hijax.active--;
                 });
-            };
+            }
 
             /*
              * Ways to intercept AJAX responses:
