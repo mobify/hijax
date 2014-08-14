@@ -76,25 +76,25 @@
         this.setXHRMethod(method, proxy);
     };
 
-    Hijax.prototype.createProxy = function(name, condition, cbs, options) {
-        var proxy = new Hijacker(name, condition, cbs, options);
+    Hijax.prototype.createProxy = function(name, condition, callbacks, options) {
+        var proxy = new Hijacker(name, condition, callbacks, options);
 
         this.proxies[name] = proxy;
 
         return proxy;
     };
 
-    Hijax.prototype.set = function(name, condition, cbs, options) {
+    Hijax.prototype.set = function(name, condition, callbacks, options) {
         // Setter
-        return this.createProxy(name, condition, cbs, options);
+        return this.createProxy(name, condition, callbacks, options);
     };
 
-    Hijax.prototype.addListener = function(name, method, cb) {
+    Hijax.prototype.addListener = function(name, method, callback) {
         // Getter
         if (!(name in this.proxies)) {
             throw name + ' proxy does not exist!';
         }
-        this.proxies[name].addListener(method, cb);
+        this.proxies[name].addListener(method, callback);
     };
 
     // Dispatch current event to all listeners
@@ -135,13 +135,13 @@
                 return xhr.readyState >= 1 && xhr.readyState <= 3;
             }
 
-            var receiveHandler = function() {
+            function receiveHandler() {
                 // In case we're coming through the RSCHandler
                 if (isProcessing(xhr)) { return; }
 
                 hijax.dispatch('receive', xhr);
             };
-            var completeHandler = function() {
+            function completeHandler() {
                 // In case we're coming through the RSCHandler
                 if (isProcessing(xhr)) { return; }
 
