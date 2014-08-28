@@ -1,5 +1,7 @@
 # Hijax XHR Proxy
 
+[![Bower version](https://badge.fury.io/bo/hijax.svg)](http://badge.fury.io/bo/hijax)
+
 Hijax is meant to be a lightweight library-independent way of intercepting XHR
 requests. It is meant to be used with the
 [Mobify Adaptive](https://github.com/mobify/adaptivejs) and
