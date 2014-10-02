@@ -178,7 +178,10 @@
                 );
             } else {
                 // No handlers found
-                console.warn('Unable to proxy desktop handlers');
+                if (window.console && console.warn) {
+                    console.warn('Couldn\'t find desktop handlers. ' +
+                        '`complete` might fire before desktop handler.');
+                }
                 xhr.onload = proxyFunction(completeHandler, receiveHandler);
             }
         });

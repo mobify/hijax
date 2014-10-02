@@ -3,7 +3,7 @@ define(['jquery', 'logger'], function($, log) {
         var $ajaxContainer = $('#ajax-container');
 
         log('desktop1', 1, 'send', 'Sending request.');
-        $.get('/example/response.json', function(data, status, xhr) {
+        $.get('/examples/response.json', function(data, status, xhr) {
             log('desktop1', 1, 'receive', 'Processing data.');
             $ajaxContainer
                 .append(
@@ -13,7 +13,7 @@ define(['jquery', 'logger'], function($, log) {
         });
 
         log('desktop2', 2, 'send', 'Sending request.');
-        $.get('/example/response.html', function(data, status, xhr) {
+        $.get('/examples/response.html', function(data, status, xhr) {
             log('desktop2', 2, 'receive', 'Processing data.');
             $ajaxContainer
                 .append(

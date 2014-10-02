@@ -7,7 +7,7 @@ require.config({
         'jquery211': 'bower_components/jquery211/dist/jquery',
         'jquery132': 'bower_components/jquery132/jquery',
 
-        'adapter': '../adapters/jquery.1.3.2',
+        'adapter': '../adapters/jquery.legacy',
 
         'hijax': '../src/hijax',
         'hijacker': '../src/hijacker'

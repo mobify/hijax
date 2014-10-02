@@ -6,13 +6,11 @@ function(Hijax, jQuery, adapter) {
 
         hijax
             .set('home', '/example/response.json', {
-                receive: function(data, xhr) {
-                    console.log('Receive!');
+                receive: function() {
                     foo = 'baz';
                 },
-                complete: function(data, xhr) {
+                complete: function() {
                     foo = 'complete';
-                    console.log('Complete!');
                 }
             });
             
@@ -21,7 +19,7 @@ function(Hijax, jQuery, adapter) {
                 .ajax({
                     url: '/example/response.json',
                     type: 'GET',
-                    success: function(data, status, xhr) {
+                    success: function(data) {
                         // Should have a value thanks to the proxy
                         foo = foo || JSON.parse(data).foo;
                         assert.equal(foo, 'baz', 'Foo value is set by Hijax');
