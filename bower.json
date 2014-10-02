@@ -2,7 +2,7 @@
     "name": "hijax",
     "version": "0.1.2",
     "dependencies": {
-        "requirejs": "2.1.11"
+        "requirejs": "2.1.14"
     },
     "devDependencies": {
         "jquery211": "jquery#2.1.1",
