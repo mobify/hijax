@@ -1,6 +1,6 @@
 {
   "name": "hijax",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "dependencies": {
     "connect": "2.19.6",
     "grunt": "0.4.2",
