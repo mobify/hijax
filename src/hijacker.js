@@ -27,7 +27,8 @@
         this.callbacks = {
             beforeSend: [],
             receive: [],
-            complete: []
+            complete: [],
+            error: []
         };
 
         var defaultParsers = {

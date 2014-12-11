@@ -183,6 +183,9 @@
                         '`complete` might fire before desktop handler.');
                 }
                 xhr.onload = proxyFunction(completeHandler, receiveHandler);
+                xhr.onerror = proxyFunction(function() {
+                    hijax.dispatch('error', xhr);
+                });
             }
         });
     };
