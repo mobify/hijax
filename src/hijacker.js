@@ -171,5 +171,27 @@
         this.callbacks[method].push(cb);
     };
 
+    // Removes the callback specified, or all callbacks for the method if no callback is given
+    Hijacker.prototype.removeListener = function(method, cb) {
+        var listeners;
+        if (!(method in this.callbacks)) {
+            throw (method + ' listener does not exist!');
+        }
+
+        listeners = this.callbacks[method];
+
+        if (cb) {
+            var foundAt = listeners.indexOf(cb);
+            if (foundAt < 0) {
+                throw (cb + ' callback does not exist!');
+            }
+            listeners = listeners.slice(0, foundAt).concat(listeners.slice(foundAt + 1));
+        } else {
+            listeners = [];
+        }
+
+        this.callbacks[method] = listeners;
+    };
+
     return Hijacker;
 }));

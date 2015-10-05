@@ -7,6 +7,7 @@ require(['config'], function(){
         var tests = [
             'tests/unit/hijax',
             'tests/unit/hijacker',
+            'tests/unit/hijackerListeners',
 
             'tests/integration/jquery-1.3.2',
             'tests/integration/jquery-2.1.1',
