@@ -154,7 +154,7 @@
     Hijacker.prototype.fireEvent = function(event, xhr) {
         var eventCallbacks = this.callbacks[event];
 
-        if (!this.condition(xhr.url)) { return; }
+        if (!this.condition(xhr.url, xhr)) { return; }
 
         for (var ctr = 0; ctr < eventCallbacks.length; ctr++) {
             if (event === 'complete' || event === 'receive') {
