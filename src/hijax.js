@@ -97,6 +97,15 @@
         this.proxies[name].addListener(method, callback);
     };
 
+    Hijax.prototype.removeListener = function(name, method, callback) {
+        // Getter
+        if (!(name in this.proxies)) {
+            throw name + ' proxy does not exist!';
+        }
+
+        this.proxies[name].removeListener(method, callback);
+    };
+
     // Dispatch current event to all listeners
     Hijax.prototype.dispatch = function(event, xhr, callback) {
         var proxies = this.proxies;
