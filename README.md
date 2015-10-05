@@ -91,7 +91,11 @@ You can receive listeners on a given instance like so:
     hijax.removeListener(<name>, <event>);
 
     // Eg:
-    hijax.removeListener('proxy1', 'beforeSend');
+    var cb = function() { ... }
+    hijax.removeListener('proxy1', 'beforeSend', cb);
+
+    // Removes all listeners on the beforeSend event
+    hijax.removeListener('proxy', 'beforeSend');
 
 ## Data Parsers
 Hijax will attempt to detect the type of data by reading the response header. If
