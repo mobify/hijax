@@ -6,7 +6,7 @@ require(['config'], function() {
     function(config, Hijax, log, desktop, adapter) {
         // Uncomment when using 1.3.2
         // var hijax = new Hijax(adapter);
-        var hijax = new Hijax();
+        var hijax = window.hijax = new Hijax();
 
         // A simple function demonstrating a condition function that detects
         // whether to intercept an AJAX request
