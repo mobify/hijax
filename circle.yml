@@ -2,6 +2,10 @@ machine:
   node:
     version: 0.10.21
 
+dependencies:
+    override:
+        - npm install
+        - bower install
 
 test:
     override:
