@@ -86,7 +86,7 @@ Additional listeners can be set like so:
         console.log(this.name, 'Another listener.');
     });
 
-You can receive listeners on a given instance like so:
+You can remove listeners on a given instance like so:
 
     hijax.removeListener(<name>, <event>);
 
