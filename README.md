@@ -41,11 +41,20 @@ Hijax is initialized by creating a hijax instance like so:
 
 If an adapter is used, it should be passed to the constructor:
 
+    // Eg:
+    var myAdapter = require('adapters/jquery.legacy');
     var hijax = new Hijax(myAdapter);
 
 An XHR request can be proxied by calling the `set` method, and providing a name,
 url/truth function and the callbacks for the events to be proxied:
 
+    hijax.set(<name>, <url> OR <function>, {
+        beforeSend: <function>, 
+        receive: <function>,
+        complete: <function> 
+    });
+
+    // Eg:
     hijax
         .set(
             // A unique name for the proxy
@@ -70,9 +79,23 @@ url/truth function and the callbacks for the events to be proxied:
 
 Additional listeners can be set like so:
 
+    hijax.addListener(<name>, <event>, <callback>);
+
+    // Eg:
     hijax.addListener('proxy1', 'complete', function(data, xhr) {
         console.log(this.name, 'Another listener.');
     });
+
+You can remove listeners on a given instance like so:
+
+    hijax.removeListener(<name>, <event>);
+
+    // Eg:
+    var cb = function() { ... }
+    hijax.removeListener('proxy1', 'beforeSend', cb);
+
+    // Removes all listeners on the beforeSend event
+    hijax.removeListener('proxy', 'beforeSend');
 
 ## Data Parsers
 Hijax will attempt to detect the type of data by reading the response header. If
@@ -87,14 +110,19 @@ does not modify the data.
 You can override the parsers by passing it in the options when creating an
 instance:
 
+    hijax.set(<name>, <url> OR <function>, { ... }, {
+        dataParsers: { ... }
+    });
+
+    // Eg:
     hijax.set('homeProxy', '/home.html', {
         complete: function(data) {
             // ...
         }
     }, {
         dataParsers: {
+            // When receiving HTML content, invoke this callback
             html: function(data) {
-                // do stuff
                 return data;
             }
         }

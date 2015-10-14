@@ -154,7 +154,7 @@
     Hijacker.prototype.fireEvent = function(event, xhr) {
         var eventCallbacks = this.callbacks[event];
 
-        if (!this.condition(xhr.url)) { return; }
+        if (!this.condition(xhr.url, xhr)) { return; }
 
         for (var ctr = 0; ctr < eventCallbacks.length; ctr++) {
             if (event === 'complete' || event === 'receive') {
@@ -169,6 +169,28 @@
     // Adds a listener to the given method queue of the current hijacker
     Hijacker.prototype.addListener = function(method, cb) {
         this.callbacks[method].push(cb);
+    };
+
+    // Removes the callback specified, or all callbacks for the method if no callback is given
+    Hijacker.prototype.removeListener = function(method, cb) {
+        var listeners;
+        if (!(method in this.callbacks)) {
+            throw (method + ' listener does not exist!');
+        }
+
+        listeners = this.callbacks[method];
+
+        if (cb) {
+            var foundAt = listeners.indexOf(cb);
+            if (foundAt < 0) {
+                throw (cb + ' callback does not exist!');
+            }
+            listeners = listeners.slice(0, foundAt).concat(listeners.slice(foundAt + 1));
+        } else {
+            listeners = [];
+        }
+
+        this.callbacks[method] = listeners;
     };
 
     return Hijacker;
@@ -252,25 +274,34 @@
         this.setXHRMethod(method, proxy);
     };
 
-    Hijax.prototype.createProxy = function(name, condition, cbs, options) {
-        var proxy = new Hijacker(name, condition, cbs, options);
+    Hijax.prototype.createProxy = function(name, condition, callbacks, options) {
+        var proxy = new Hijacker(name, condition, callbacks, options);
 
         this.proxies[name] = proxy;
 
         return proxy;
     };
 
-    Hijax.prototype.set = function(name, condition, cbs, options) {
+    Hijax.prototype.set = function(name, condition, callbacks, options) {
         // Setter
-        return this.createProxy(name, condition, cbs, options);
+        return this.createProxy(name, condition, callbacks, options);
     };
 
-    Hijax.prototype.addListener = function(name, method, cb) {
+    Hijax.prototype.addListener = function(name, method, callback) {
         // Getter
         if (!(name in this.proxies)) {
             throw name + ' proxy does not exist!';
         }
-        this.proxies[name].addListener(method, cb);
+        this.proxies[name].addListener(method, callback);
+    };
+
+    Hijax.prototype.removeListener = function(name, method, callback) {
+        // Getter
+        if (!(name in this.proxies)) {
+            throw name + ' proxy does not exist!';
+        }
+
+        this.proxies[name].removeListener(method, callback);
     };
 
     // Dispatch current event to all listeners
@@ -311,20 +342,21 @@
                 return xhr.readyState >= 1 && xhr.readyState <= 3;
             }
 
-            var receiveHandler = function() {
+            function receiveHandler() {
                 // In case we're coming through the RSCHandler
                 if (isProcessing(xhr)) { return; }
 
                 hijax.dispatch('receive', xhr);
-            };
-            var completeHandler = function() {
+            }
+
+            function completeHandler() {
                 // In case we're coming through the RSCHandler
                 if (isProcessing(xhr)) { return; }
 
                 hijax.dispatch('complete', xhr, function() {
                     hijax.active--;
                 });
-            };
+            }
 
             /*
              * Ways to intercept AJAX responses:
@@ -353,7 +385,10 @@
                 );
             } else {
                 // No handlers found
-                console.warn('Unable to proxy desktop handlers');
+                if (window.console && console.warn) {
+                    console.warn('Couldn\'t find desktop handlers. ' +
+                        '`complete` might fire before desktop handler.');
+                }
                 xhr.onload = proxyFunction(completeHandler, receiveHandler);
             }
         });
@@ -361,3 +396,4 @@
 
     return Hijax;
 }));
+

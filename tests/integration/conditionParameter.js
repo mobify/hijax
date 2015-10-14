@@ -1,11 +1,15 @@
-define(['hijax', 'jquery132', 'adapter'],
-function(Hijax, jQuery, adapter) {
-    describe('Hijax proxying tests  (jQuery 1.3.2)', function() {
+define(['hijax', 'jquery211'],
+function(Hijax, jQuery) {
+    describe('Hijax URL Condition tests', function() {
+        var urlIsEqual;
+        var hijax = new Hijax();
         var foo;
-        var hijax = new Hijax(adapter);
 
         hijax
-            .set('home', '/examples/response.json', {
+            .set('home', function(url, xhr) {
+                urlIsEqual = (url === xhr.url);
+                return urlIsEqual;
+            }, {
                 receive: function() {
                     foo = 'baz';
                 },
@@ -14,7 +18,7 @@ function(Hijax, jQuery, adapter) {
                 }
             });
             
-        it('proxies the AJAX request', function(done) {
+        it('passes xhr as part of condition function', function(done) {
             jQuery
                 .ajax({
                     url: '/examples/response.json',
@@ -22,7 +26,7 @@ function(Hijax, jQuery, adapter) {
                     success: function(data) {
                         // Should have a value thanks to the proxy
                         foo = foo || JSON.parse(data).foo;
-                        assert.equal(foo, 'baz', 'Foo value is set by Hijax');
+                        assert.equal(urlIsEqual, true, 'urlIsEqual value is set by Hijax');
                         done();
                     }
                 });

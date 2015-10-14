@@ -1,0 +1,14 @@
+0.2.0
+    - Fixed error in integration test
+    - Fixed circle.yml to run tests correctly
+    - Added removeListener functions to hijax and hijacker
+    - Pass in xhr method in hijacker condition method
+0.1.3
+    - Updated requirejs
+    - Refactored examples
+0.1.2
+    - Fixed a bug in jQuery 1.3.2 adapter
+    - Fixed a bug in Hijacker when content type headers weren't available
+    - Some example refactoring
+0.1.1
+    - Initial release

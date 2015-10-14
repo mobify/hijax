@@ -5,7 +5,8 @@ machine:
 dependencies:
     override:
         - npm install
+        - bower install
 
 test:
     override:
-        - ./node_modules/mocha/bin/mocha --timeout 20000
+        - grunt test

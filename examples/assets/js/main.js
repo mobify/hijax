@@ -6,11 +6,13 @@ require(['config'], function() {
     function(config, Hijax, log, desktop, adapter) {
         // Uncomment when using 1.3.2
         // var hijax = new Hijax(adapter);
-        var hijax = new Hijax();
+        var hijax = window.hijax = new Hijax();
 
-        // URL match as function
+        // A simple function demonstrating a condition function that detects
+        // whether to intercept an AJAX request
         var condition = function(url) {
-            return (/^\/example\/response\.html/).test(url);
+            // Just make sure the URL is what we expect
+            return (/^\/examples\/response\.html/).test(url);
         };
 
         // Instantiate proxy

@@ -4,20 +4,26 @@
     <meta charset="UTF-8">
     <title>Hijax Example</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 <body>
     <h1>Hijax</h1>
+    <p>Hijax will intercept AJAX requests fired by the desktop script, as
+        configured in main.js.</p>
 
-    <h2>This container will be populated with AJAX:</h2>
-    <!-- Desktop code will populate data here -->
-    <div id="ajax-container"></div>
+    <button type="button" class="js-send-ajax" data-type="json">JSON AJAX</button>
+    <button type="button" class="js-send-ajax" data-type="html">HTML AJAX</button>
 
-    <div class="log" data-request="1">
-        <h2>Request 1</h2>
-    </div>
+    <div class="playground">
+        <div class="ajax-container">
+            <!-- Desktop code will populate data here -->
+            <div id="js-ajax-target">Press the AJAX buttons above to see Hijax
+                at work.</div>
+        </div>
 
-    <div class="log" data-request="2">
-        <h2>Request 2</h2>
+        <div id="js-log" class="log">
+            <h2>Request log</h2>
+        </div>
     </div>
 
     <script data-main="assets/js/main" src="../bower_components/requirejs/require.js"></script>
