@@ -1,5 +1,3 @@
-0.3.0
-    - Publish on NPM
 0.2.0
     - Fixed error in integration test
     - Fixed circle.yml to run tests correctly
