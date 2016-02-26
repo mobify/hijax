@@ -20,7 +20,7 @@ require(['config'], function() {
             .set(
                 'homeJSON',
                 '/examples/response.json',
-                {
+            {
                 // Request is being sent
                 beforeSend: function(xhr) {
                     log(this.name, 1, 'send', 'Intercepting send.');

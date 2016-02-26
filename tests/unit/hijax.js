@@ -1,3 +1,4 @@
+/* global assert */
 define(['hijax'],
 function(Hijax) {
     var hijax = new Hijax();

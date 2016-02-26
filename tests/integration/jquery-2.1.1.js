@@ -1,3 +1,4 @@
+/* global assert */
 define(['hijax', 'jquery211'],
 function(Hijax, jQuery) {
     describe('Hijax proxying tests  (jQuery 2.1.1)', function() {

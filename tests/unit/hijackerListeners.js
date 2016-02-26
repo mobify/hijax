@@ -1,3 +1,4 @@
+/* global assert */
 define(['hijacker'],
 function(Hijacker) {
     var callbackOne = function() {
@@ -55,6 +56,6 @@ function(Hijacker) {
             } catch (e) {
                 assert.deepEqual(hijacker.callbacks['receive'], [callbackOne, callbackTwo], 'No callbacks have been removed.');
             }
-        })
+        });
     });
 });

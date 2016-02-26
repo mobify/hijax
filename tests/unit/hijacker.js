@@ -1,3 +1,4 @@
+/* global assert */
 define(['hijacker'],
 function(Hijacker) {
     var hijacker = new Hijacker('test', '/', {

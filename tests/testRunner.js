@@ -1,8 +1,8 @@
-require(['config'], function(){
+require(['config'], function() {
     require(['require',
              'chai',
              'mocha'],
-    function(require, chai, mocha){
+    function(require, chai, mocha) {
 
         var tests = [
             'tests/unit/hijax',
@@ -16,8 +16,8 @@ require(['config'], function(){
         ];
 
         require(tests, function() {
-            assert = chai.assert;
-            if(window.mochaPhantomJS) {
+            var assert = chai.assert;
+            if (window.mochaPhantomJS) {
                 return window.mochaPhantomJS.run();
             }
             mocha.timeout(2000);

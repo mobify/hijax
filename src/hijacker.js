@@ -11,8 +11,8 @@
         // Browser globals (root is window)
         root.Hijacker = factory();
     }
-}(this, function() {
-    function Hijacker(name, condition, callbacks, options) {
+})(this, function() {
+    var Hijacker = function(name, condition, callbacks, options) {
         options = options || {};
 
         if (!name || !condition || !callbacks ||
@@ -57,7 +57,7 @@
         }
 
         return this;
-    }
+    };
 
     var states = {
         UNSENT: 0,
@@ -91,7 +91,7 @@
     };
 
     // Data parse methods adapted from jQuery 2.1.1
-    function getResponses(xhr) {
+    var getResponses = function(xhr) {
         var responses = {};
         var responseFields = {
             'text': 'responseText',
@@ -107,7 +107,7 @@
         }
 
         return responses;
-    }
+    };
 
     // Check which response types have been provided by the server
     Hijacker.prototype.getResponseHeaderType = function(xhr) {
@@ -194,4 +194,4 @@
     };
 
     return Hijacker;
-}));
+});

@@ -1,3 +1,4 @@
+/* global assert */
 define(['hijax', 'jquery132', 'adapter'],
 function(Hijax, jQuery, adapter) {
     describe('Hijax proxying tests  (jQuery 1.3.2)', function() {
@@ -13,7 +14,7 @@ function(Hijax, jQuery, adapter) {
                     foo = 'complete';
                 }
             });
-            
+
         it('proxies the AJAX request', function(done) {
             jQuery
                 .ajax({

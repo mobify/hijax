@@ -17,7 +17,7 @@ module.exports = function(grunt) {
     ];
 
     npmTasks.forEach(function(taskName) {
-        if(!grunt.task._tasks[taskName]) {
+        if (!grunt.task._tasks[taskName]) {
             grunt.loadNpmTasks(taskName);
         }
     });
@@ -36,6 +36,7 @@ module.exports = function(grunt) {
         config[configName] = _.extend(config[configName] || {}, option);
     });
 
+    // JS Linting
     var lint = require('./tasks/jslinting');
 
     config = _.extend(config, {

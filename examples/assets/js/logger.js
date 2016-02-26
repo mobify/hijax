@@ -1,7 +1,7 @@
-define(['jquery'], function ($) {
+define(['jquery'], function($) {
     var started = Date.now();
 
-    return function (caller, eventName) {
+    return function(caller, eventName) {
         var args = [].slice.call(arguments, 3);
 
         var $log = $('#js-log');

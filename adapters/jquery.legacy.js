@@ -1,7 +1,7 @@
 /* global hijax */
 /*
  * Hijax adapter for legacy jQuery versions.
- * 
+ *
  * Tested on: jQuery 1.3.2
  *
  */
@@ -18,7 +18,7 @@
         // Browser globals (root is window)
         root.jQueryAdapter = factory();
     }
-}(this, function() {
+})(this, function() {
     return {
         init: function(doc) {
             var hijax = this;
@@ -48,4 +48,4 @@
             });
         }
     };
-}));
+});

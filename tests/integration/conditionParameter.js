@@ -1,3 +1,4 @@
+/* global assert */
 define(['hijax', 'jquery211'],
 function(Hijax, jQuery) {
     describe('Hijax URL Condition tests', function() {
@@ -17,7 +18,7 @@ function(Hijax, jQuery) {
                     foo = 'complete';
                 }
             });
-            
+
         it('passes xhr as part of condition function', function(done) {
             jQuery
                 .ajax({
