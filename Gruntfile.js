@@ -62,6 +62,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build:dev', ['eslint:dev', 'requirejs:dev']);
     grunt.registerTask('build:prod', ['eslint:prod', 'requirejs:prod']);
+    grunt.registerTask('build', ['build:dev', 'build:prod']);
 
     grunt.registerTask('serve', ['eslint:dev', 'connect:serve:keepalive']);
     grunt.registerTask('test', ['eslint:prod', 'connect:serve', 'mocha_phantomjs']);

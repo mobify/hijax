@@ -11,8 +11,8 @@
         // Browser globals (root is window)
         root.Hijacker = factory();
     }
-}(this, function() {
-    function Hijacker(name, condition, callbacks, options) {
+})(this, function() {
+    var Hijacker = function(name, condition, callbacks, options) {
         options = options || {};
 
         if (!name || !condition || !callbacks ||
@@ -57,7 +57,7 @@
         }
 
         return this;
-    }
+    };
 
     var states = {
         UNSENT: 0,
@@ -91,7 +91,7 @@
     };
 
     // Data parse methods adapted from jQuery 2.1.1
-    function getResponses(xhr) {
+    var getResponses = function(xhr) {
         var responses = {};
         var responseFields = {
             'text': 'responseText',
@@ -107,7 +107,7 @@
         }
 
         return responses;
-    }
+    };
 
     // Check which response types have been provided by the server
     Hijacker.prototype.getResponseHeaderType = function(xhr) {
@@ -194,12 +194,12 @@
     };
 
     return Hijacker;
-}));
+});
 
 (function(root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define('hijax',['hijacker'], factory);
+        define('hijax', ['hijacker'], factory);
     } else if (typeof exports === 'object') {
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like environments that support module.exports,
@@ -209,7 +209,7 @@
         // Browser globals (root is window)
         root.hijax = factory(root.Hijacker);
     }
-}(this, function(Hijacker) {
+})(this, function(Hijacker) {
     /**
      * Proxy destFn, so that beforeFn runs before it, and afterFn runs after it
      *
@@ -217,7 +217,7 @@
      * @beforeFn {Function}:    (optional) Runs before destFn
      * @afterFn {Function}:     (optional) Runs after destFn
      */
-    function proxyFunction(destFn, beforeFn, afterFn) {
+    var proxyFunction = function(destFn, beforeFn, afterFn) {
         var proxied = function() {
             var result;
 
@@ -236,7 +236,7 @@
         };
 
         return proxied;
-    }
+    };
 
     // XHR states
     var states = {
@@ -247,7 +247,7 @@
         DONE: 4
     };
 
-    function Hijax(adapter) {
+    var Hijax = function(adapter) {
         this.proxies = {};
         this.adapter = adapter;
 
@@ -259,7 +259,7 @@
         } else {
             adapter.init.call(this);
         }
-    }
+    };
 
     Hijax.prototype.getXHRMethod = function(method) {
         return window.XMLHttpRequest.prototype[method];
@@ -338,25 +338,25 @@
             // libraries sometimes set readyState to 0 after processing
             // (so receive will fire, complete won't). Instead, we just make sure
             // the data isn't incomplete (states 1, 2, 3)
-            function isProcessing(xhr) {
+            var isProcessing = function(xhr) {
                 return xhr.readyState >= 1 && xhr.readyState <= 3;
-            }
+            };
 
-            function receiveHandler() {
+            var receiveHandler = function() {
                 // In case we're coming through the RSCHandler
                 if (isProcessing(xhr)) { return; }
 
                 hijax.dispatch('receive', xhr);
-            }
+            };
 
-            function completeHandler() {
+            var completeHandler = function() {
                 // In case we're coming through the RSCHandler
                 if (isProcessing(xhr)) { return; }
 
                 hijax.dispatch('complete', xhr, function() {
                     hijax.active--;
                 });
-            }
+            };
 
             /*
              * Ways to intercept AJAX responses:
@@ -395,5 +395,5 @@
     };
 
     return Hijax;
-}));
+});
 
