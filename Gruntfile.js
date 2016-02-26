@@ -36,23 +36,24 @@ module.exports = function(grunt) {
         config[configName] = _.extend(config[configName] || {}, option);
     });
 
+    var lint = require('./tasks/jslinting');
+
     config = _.extend(config, {
-        jshint:{
+        eslint:{
             dev: {
-                src: ['src/**/*.js'],
+                src: lint.targets,
                 options: {
-                    // The task fails if force is set to false. With true, it shows the
-                    // linting errors, but continues
-                    force: false,
-                    jshintrc: 'node_modules/mobify-code-style/javascript/.jshintrc'
+                    reset: true,
+                    config: require.resolve('mobify-code-style/javascript/.eslintrc')
+                }
+            },
+            prod: {
+                src: lint.targets,
+                options: {
+                    reset: true,
+                    config: require.resolve('mobify-code-style/javascript/.eslintrc-prod')
                 }
             }
-        },
-        jscs: {
-            options: {
-                config: 'node_modules/mobify-code-style/javascript/.jscsrc'
-            },
-            src: ['src/**/*.js']
         }
     });
 
