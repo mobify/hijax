@@ -16,7 +16,7 @@ require(['config'], function() {
         ];
 
         require(tests, function() {
-            var assert = chai.assert;
+            assert = chai.assert; // eslint-disable-line
             if (window.mochaPhantomJS) {
                 return window.mochaPhantomJS.run();
             }
