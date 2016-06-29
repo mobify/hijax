@@ -1,7 +1,7 @@
 Issue: (link to applicable gitHub Issue)
 Linked PRs: (links to corresponding PRs, optional)
 
-** Reviewers: ** (List the people who you like to have this PR to be reviewed)
+**Reviewers:** (List the people who you like to have this PR to be reviewed)
 
 ## Changes
 - (changes here)
