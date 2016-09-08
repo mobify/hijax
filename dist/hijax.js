@@ -79,12 +79,13 @@
 
             responseHeadersString = xhr.getAllResponseHeaders();
 
-            if (!this.responseHeaders) {
-                this.responseHeaders = {};
-                while ((match = rHeaders.exec(responseHeadersString))) {
-                    this.responseHeaders[match[1].toLowerCase()] = match[2];
-                }
+            // We need to clear the responseHeaders object every time, otherwise
+            // we might get a content type mismatch which causes 🔥💣🔥
+            this.responseHeaders = {};
+            while ((match = rHeaders.exec(responseHeadersString))) {
+                this.responseHeaders[match[1].toLowerCase()] = match[2];
             }
+
             match = this.responseHeaders[key.toLowerCase()];
         }
         return match === null ? null : match;
