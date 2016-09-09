@@ -69,26 +69,22 @@
 
     // Get a particular response header value by key
     // Extracted from jQuery 2.1.1
+    // Changed to grab content-type only (we only use content-type, no need to set everything) from XHR object
     Hijacker.prototype.getResponseHeader = function(xhr, key) {
         var rHeaders = /^(.*?):[ \t]*([^\r\n]*)$/mg;
-        var match;
         var responseHeadersString;
+        var contentType;
 
         if ([states.HEADERS_RECEIVED, states.LOADING, states.DONE]
                 .indexOf(xhr.readyState) > -1) {
 
             responseHeadersString = xhr.getAllResponseHeaders();
 
-            // We need to clear the responseHeaders object every time, otherwise
-            // we might get a content type mismatch which causes 🔥💣🔥
-            this.responseHeaders = {};
-            while ((match = rHeaders.exec(responseHeadersString))) {
-                this.responseHeaders[match[1].toLowerCase()] = match[2];
-            }
+            contentType = responseHeadersString.match(/Content-Type:\s*(.*?);\s*charset/);
 
-            match = this.responseHeaders[key.toLowerCase()];
+            contentType = contentType.length > 1 ? contentType[1] : null;
         }
-        return match === null ? null : match;
+        return contentType;
     };
 
     // Data parse methods adapted from jQuery 2.1.1
@@ -397,4 +393,3 @@
 
     return Hijax;
 }));
-
