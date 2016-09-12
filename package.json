@@ -8,6 +8,7 @@
     "test": "tests"
   },
   "devDependencies": {
+    "bower": "1.7.9",
     "chai": "^1.9.0",
     "connect": "2.19.6",
     "grunt": "0.4.2",

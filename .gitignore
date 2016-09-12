@@ -1,3 +1,4 @@
 node_modules
 localSettings.json
 .sass-cache/
+bower_components/

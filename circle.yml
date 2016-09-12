@@ -5,6 +5,7 @@ machine:
 dependencies:
     override:
         - npm install
+        - ./node_modules/.bin/bower install
 
 test:
     override:
