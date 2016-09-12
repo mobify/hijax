@@ -127,3 +127,20 @@ instance:
             }
         }
     });
+
+## Development
+
+Developing Hijax locally involves:
+```bash
+# Grab dev dependencies
+npm install
+./node_modules/.bin/bower install
+```
+
+Check out some of the example usages in `examples/`
+
+Building `dist/` code:
+
+Run `grunt` or `grunt build`
+
+Open a PR!
