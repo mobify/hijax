@@ -79,6 +79,8 @@
 
             responseHeadersString = xhr.getAllResponseHeaders();
 
+            // We need to clear the responseHeaders object every time, otherwise
+            // we might get a content type mismatch which causes 🔥💣🔥
             var responseHeaders = {};
             while ((match = rHeaders.exec(responseHeadersString))) {
                 responseHeaders[match[1].toLowerCase()] = match[2];
