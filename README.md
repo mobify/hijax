@@ -1,6 +1,6 @@
 # Hijax XHR Proxy
 
-[![Bower version](https://badge.fury.io/bo/hijax.svg)](http://badge.fury.io/bo/hijax)
+[![NPM](https://nodei.co/npm/hijax.png?downloads=true&stars=true)](https://nodei.co/npm/hijax/)
 
 Hijax is meant to be a lightweight library-independent way of intercepting XHR
 requests. It is meant to be used with the
@@ -49,9 +49,9 @@ An XHR request can be proxied by calling the `set` method, and providing a name,
 url/truth function and the callbacks for the events to be proxied:
 
     hijax.set(<name>, <url> OR <function>, {
-        beforeSend: <function>, 
+        beforeSend: <function>,
         receive: <function>,
-        complete: <function> 
+        complete: <function>
     });
 
     // Eg:
@@ -127,3 +127,20 @@ instance:
             }
         }
     });
+
+## Development
+
+Developing Hijax locally involves:
+```bash
+# Grab dev dependencies
+npm install
+./node_modules/.bin/bower install
+```
+
+Check out some of the example usages in `examples/`
+
+Building `dist/` code:
+
+Run `grunt` or `grunt build`
+
+Open a PR!

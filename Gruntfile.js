@@ -60,6 +60,8 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build:dev', ['jshint', 'jscs', 'requirejs:dev']);
     grunt.registerTask('build:prod', ['jshint', 'jscs', 'requirejs:prod']);
+    grunt.registerTask('build', ['build:dev', 'build:prod']);
+    grunt.registerTask('default', ['build']);
 
     grunt.registerTask('serve', ['jshint:dev', 'jscs', 'connect:serve:keepalive']);
     grunt.registerTask('test', ['connect:serve', 'mocha_phantomjs']);
