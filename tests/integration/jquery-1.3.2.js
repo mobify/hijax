@@ -2,7 +2,7 @@ define(['hijax', 'jquery132', 'adapter'],
 function(Hijax, jQuery, adapter) {
     describe('Hijax proxying tests  (jQuery 1.3.2)', function() {
         var foo;
-        var hijax = new Hijax(adapter);
+        var hijax = new Hijax(adapter, true);
 
         hijax
             .set('home', '/examples/response.json', {

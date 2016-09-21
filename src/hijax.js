@@ -51,8 +51,8 @@
 
     var instance = null;
 
-    function Hijax(adapter) {
-        if (instance === null) {
+    function Hijax(adapter, clearInstance) {
+        if (instance === null || clearInstance) {
             this.proxies = {};
             this.adapter = adapter;
 
