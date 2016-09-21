@@ -6,7 +6,7 @@ function(Hijax, jQuery) {
         var foo;
 
         hijax
-            .set('home', function(url, xhr) {
+            .set('home2', function(url, xhr) {
                 urlIsEqual = (url === xhr.url);
                 return urlIsEqual;
             }, {

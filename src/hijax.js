@@ -49,18 +49,23 @@
         DONE: 4
     };
 
+    var instance = null;
+
     function Hijax(adapter) {
-        this.proxies = {};
-        this.adapter = adapter;
+        if (instance === null) {
+            this.proxies = {};
+            this.adapter = adapter;
 
-        // Active connections
-        this.active = 0;
+            // Active connections
+            this.active = 0;
 
-        if (!adapter) {
-            this.proxyXHREvents();
-        } else {
-            adapter.init.call(this);
-        }
+            if (!adapter) {
+                this.proxyXHREvents();
+            } else {
+                adapter.init.call(this);
+            }
+            instance = this;
+        } else return instance;
     }
 
     Hijax.prototype.getXHRMethod = function(method) {
