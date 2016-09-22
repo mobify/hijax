@@ -25,9 +25,9 @@ function(Hijax) {
 
         it('clears proxied XHR methods', function() {
             var hijax = new Hijax(null, true);
-            assert.isFalse(/\{ \[native code\] \}/.test(hijax.getXHRMethod('open')));
+            assert.isTrue(/Proxied by Hijax/i.test(hijax.getXHRMethod('open')));
             hijax.clearProxiedXHREvents();
-            assert.isTrue(/\{ \[native code\] \}/.test(hijax.getXHRMethod('open')));
+            assert.isFalse(/Proxied by Hijax/i.test(hijax.getXHRMethod('open')));
         });
     });
 });

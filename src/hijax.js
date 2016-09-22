@@ -21,6 +21,11 @@
      */
     function proxyFunction(destFn, beforeFn, afterFn) {
         var proxied = function() {
+            /**
+             * -- Proxied by Hijax. --
+             * This tag is required to determine whether the native XHR methods
+             * have been proxied yet. Do not remove this tag!
+            */
             var result;
 
             if (typeof destFn !== 'function') {
@@ -82,7 +87,7 @@
 
     Hijax.prototype.proxyXhrMethod = function(method, before, after) {
         var xhrMethod = this.getXHRMethod(method);
-        if (/\{ \[native code\] \}/.test(xhrMethod.toString())) {
+        if (!/Proxied by Hijax/i.test(xhrMethod.toString())) {
             nativeXHR[method] = xhrMethod;
         }
         var proxy = proxyFunction(nativeXHR[method], before, after);
