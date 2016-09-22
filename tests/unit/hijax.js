@@ -22,5 +22,12 @@ function(Hijax) {
             assert.equal(hijaxA, hijaxB);
             assert.notEqual(hijaxA, hijaxC);
         });
+
+        it('clears proxied XHR methods', function() {
+            var hijax = new Hijax(null, true);
+            assert.isFalse(/\{ \[native code\] \}/.test(hijax.getXHRMethod('open')));
+            hijax.clearProxiedXHREvents();
+            assert.isTrue(/\{ \[native code\] \}/.test(hijax.getXHRMethod('open')));
+        });
     });
 });
