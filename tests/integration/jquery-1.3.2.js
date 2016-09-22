@@ -5,6 +5,8 @@ function(Hijax, jQuery, adapter) {
         var hijax;
 
         before(function() {
+            window.jQuery = jQuery; // So that the legacy adapter uses the right version of jQuery
+
             hijax = new Hijax(adapter, true);
             hijax
                 .set('jquery-1.3.2', '/examples/response.json', {

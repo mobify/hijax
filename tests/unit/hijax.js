@@ -5,6 +5,7 @@ function(Hijax) {
             var hijax = new Hijax();
             assert.equal(typeof hijax, 'object', 'Hijax created');
         });
+
         it('maintains a singleton instance', function() {
             var hijaxA = new Hijax(null, true);
             var hijaxB = new Hijax();
@@ -13,6 +14,7 @@ function(Hijax) {
             var hijaxE = new Hijax();
             assert.equal(hijaxA, hijaxE);
         });
+
         it('clears singleton instance', function() {
             var hijaxA = new Hijax(null, true);
             var hijaxB = new Hijax();
