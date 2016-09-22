@@ -50,6 +50,7 @@
     };
 
     var instance = null;
+    var nativeXHR = {};
 
     function Hijax(adapter, clearInstance) {
         if (instance === null || clearInstance) {
@@ -59,6 +60,9 @@
             // Active connections
             this.active = 0;
 
+            if (clearInstance) {
+                this.clearProxiedXHREvents();
+            }
             if (!adapter) {
                 this.proxyXHREvents();
             } else {
@@ -77,7 +81,11 @@
     };
 
     Hijax.prototype.proxyXhrMethod = function(method, before, after) {
-        var proxy = proxyFunction(this.getXHRMethod(method), before, after);
+        var xhrMethod = this.getXHRMethod(method);
+        if (/\{ \[native code\] \}/.test(xhrMethod.toString())) {
+            nativeXHR[method] = xhrMethod;
+        }
+        var proxy = proxyFunction(nativeXHR[method], before, after);
         this.setXHRMethod(method, proxy);
     };
 
@@ -121,6 +129,14 @@
         }
 
         typeof callback === 'function' && callback();
+    };
+
+    Hijax.prototype.clearProxiedXHREvents = function() {
+        for (var method in nativeXHR) {
+            if (nativeXHR.hasOwnProperty(method)) {
+                this.setXHRMethod(method, nativeXHR[method]);
+            }
+        }
     };
 
     // Can be overridden by an adapter
