@@ -61,6 +61,7 @@
         if (instance === null || clearInstance) {
             this.proxies = {};
             this.adapter = adapter;
+            this.whitelistedDomains = [location.hostname];
 
             // Active connections
             this.active = 0;
@@ -76,6 +77,34 @@
             instance = this;
         } else return instance;
     }
+
+    Hijax.prototype.addWhitelistedDomain = function(domain) {
+        if (this.whitelistedDomains.indexOf(domain) >= 0) {
+            console.warn("Hijax: Tried to add " + domain + " to the whitelist but it is already there.");
+        } else {
+            this.whitelistedDomains.push(domain);
+        }
+    };
+
+    Hijax.prototype.removeWhitelistedDomain = function(domain) {
+        var idx = this.whitelistedDomains.indexOf(domain);
+        if (idx >= 0) {
+            this.whitelistedDomains.splice(idx, 1);
+        } else {
+            console.warn("Hijax: Tried to remove " + domain + " from the whitelist but it wasn't there.");
+        }
+    };
+
+    Hijax.prototype.isWhitelistedUrl = function(url) {
+        return this.whitelistedDomains
+            .reduce(
+                function(res, domain) {
+                    var pattern = new RegExp('^https?:\/\/' + domain);
+                    return res || pattern.test(url);
+                },
+                !/https?:\/\//.test(url)
+            );
+    };
 
     Hijax.prototype.getXHRMethod = function(method) {
         return window.XMLHttpRequest.prototype[method];
@@ -126,10 +155,12 @@
 
     // Dispatch current event to all listeners
     Hijax.prototype.dispatch = function(event, xhr, callback) {
-        var proxies = this.proxies;
-        for (var proxy in proxies) {
-            if (proxies.hasOwnProperty(proxy)) {
-                proxies[proxy].fireEvent(event, xhr);
+        if (this.isWhitelistedUrl(xhr.url)) {
+            var proxies = this.proxies;
+            for (var proxy in proxies) {
+                if (proxies.hasOwnProperty(proxy)) {
+                    proxies[proxy].fireEvent(event, xhr);
+                }
             }
         }
 
