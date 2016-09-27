@@ -169,21 +169,21 @@ instance:
 
 ## Development
 
-To develop Hijax locally:
+#### To develop Hijax locally:
 ```bash
 # Grab dev dependencies
 npm install
 ./node_modules/.bin/bower install
 ```
 
-To get familiar with Hijax:
+#### To get familiar with Hijax:
 Check out some of the example usages in `examples/`
 
-To test:
+#### To test:
 Run `grunt serve` and open `http://localhost:8888/tests/` in your browser
 
-To build `dist/` code:
+#### To build `dist/` code:
 Run `grunt` or `grunt build`
 
-To contribute:
+#### To contribute:
 Open a PR!
