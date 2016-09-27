@@ -1,5 +1,6 @@
 Unreleased
     - Make Hijax a singleton
+    - Pass all requests through a domain whitelist before processing
 0.2.1
     - Fix bug with response headers not being cleared and reset for every request
 0.2.0

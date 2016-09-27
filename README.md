@@ -107,6 +107,35 @@ You can remove listeners on a given instance like so:
     // Removes all listeners on the beforeSend event
     hijax.removeListener('proxy', 'beforeSend');
 
+Note that Hijax operates on a domain whitelist to prevent the interception of irrelevant requests. By default, this whitelist includes the current host. For example:
+
+    // For an instance of Hijax running on www.example.com
+    
+    hijax.set(
+        'bookReviews',
+        function(url) {
+            return /\/reviews\/books/.test(url);
+        },
+        {
+            receive: function(data, xhr) {
+                // The following urls would reach this callback:
+                // - /reviews/books
+                // - http://www.example.com/reviews/books
+                // - https://www.example.com/reviews/books
+                // - http://www.example.com/users/reviews/books/novels
+    
+                // The following urls would *not* reach this callback:
+                // - http://www.mobify.com/reviews/books
+                // - http://www.mobify.com/?referrer=http://www.example.com/reviews/books
+            }
+        }
+    );
+
+Additional domains can be added and removed from the whitelist like so:
+    
+    hijax.addWhitelistedDomain('www.mobify.com');
+    hijax.removeWhitelistedDomain('www.mobify.com');
+
 ## Data Parsers
 Hijax will attempt to detect the type of data by reading the response header. If
 the response is available in the respective format (for instance, responseJSON
@@ -140,17 +169,21 @@ instance:
 
 ## Development
 
-Developing Hijax locally involves:
+To develop Hijax locally:
 ```bash
 # Grab dev dependencies
 npm install
 ./node_modules/.bin/bower install
 ```
 
+To get familiar with Hijax:
 Check out some of the example usages in `examples/`
 
-Building `dist/` code:
+To test:
+Run `grunt serve` and open `http://localhost:8888/tests/` in your browser
 
+To build `dist/` code:
 Run `grunt` or `grunt build`
 
+To contribute:
 Open a PR!
