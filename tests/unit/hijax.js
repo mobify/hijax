@@ -1,9 +1,33 @@
 define(['hijax'],
 function(Hijax) {
-    var hijax = new Hijax();
     describe('Hijax Tests', function() {
         it('creates a Hijax constructor', function() {
+            var hijax = new Hijax();
             assert.equal(typeof hijax, 'object', 'Hijax created');
+        });
+
+        it('maintains a singleton instance', function() {
+            var hijaxA = new Hijax(null, true);
+            var hijaxB = new Hijax();
+            var hijaxC = new Hijax();
+            var hijaxD = new Hijax();
+            var hijaxE = new Hijax();
+            assert.equal(hijaxA, hijaxE);
+        });
+
+        it('clears singleton instance', function() {
+            var hijaxA = new Hijax(null, true);
+            var hijaxB = new Hijax();
+            var hijaxC = new Hijax(null, true);
+            assert.equal(hijaxA, hijaxB);
+            assert.notEqual(hijaxA, hijaxC);
+        });
+
+        it('clears proxied XHR methods', function() {
+            var hijax = new Hijax(null, true);
+            assert.isTrue(/Proxied by Hijax/i.test(hijax.getXHRMethod('open')));
+            hijax.clearProxiedXHREvents();
+            assert.isFalse(/Proxied by Hijax/i.test(hijax.getXHRMethod('open')));
         });
     });
 });

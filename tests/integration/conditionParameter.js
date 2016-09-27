@@ -2,21 +2,24 @@ define(['hijax', 'jquery211'],
 function(Hijax, jQuery) {
     describe('Hijax URL Condition tests', function() {
         var urlIsEqual;
-        var hijax = new Hijax();
+        var hijax;
         var foo;
 
-        hijax
-            .set('home', function(url, xhr) {
-                urlIsEqual = (url === xhr.url);
-                return urlIsEqual;
-            }, {
-                receive: function() {
-                    foo = 'baz';
-                },
-                complete: function() {
-                    foo = 'complete';
-                }
-            });
+        before(function() {
+            hijax = new Hijax(null, true);
+            hijax
+                .set('conditionParameter', function(url, xhr) {
+                    urlIsEqual = (url === xhr.url);
+                    return urlIsEqual;
+                }, {
+                    receive: function() {
+                        foo = 'baz';
+                    },
+                    complete: function() {
+                        foo = 'complete';
+                    }
+                });
+        });
             
         it('passes xhr as part of condition function', function(done) {
             jQuery

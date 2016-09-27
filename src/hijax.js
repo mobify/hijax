@@ -21,6 +21,11 @@
      */
     function proxyFunction(destFn, beforeFn, afterFn) {
         var proxied = function() {
+            /**
+             * -- Proxied by Hijax. --
+             * This tag is required to determine whether the native XHR methods
+             * have been proxied yet. Do not remove this tag!
+            */
             var result;
 
             if (typeof destFn !== 'function') {
@@ -49,18 +54,27 @@
         DONE: 4
     };
 
-    function Hijax(adapter) {
-        this.proxies = {};
-        this.adapter = adapter;
+    var instance = null;
+    var nativeXHR = {};
 
-        // Active connections
-        this.active = 0;
+    function Hijax(adapter, clearInstance) {
+        if (instance === null || clearInstance) {
+            this.proxies = {};
+            this.adapter = adapter;
 
-        if (!adapter) {
-            this.proxyXHREvents();
-        } else {
-            adapter.init.call(this);
-        }
+            // Active connections
+            this.active = 0;
+
+            if (clearInstance) {
+                this.clearProxiedXHREvents();
+            }
+            if (!adapter) {
+                this.proxyXHREvents();
+            } else {
+                adapter.init.call(this);
+            }
+            instance = this;
+        } else return instance;
     }
 
     Hijax.prototype.getXHRMethod = function(method) {
@@ -72,7 +86,11 @@
     };
 
     Hijax.prototype.proxyXhrMethod = function(method, before, after) {
-        var proxy = proxyFunction(this.getXHRMethod(method), before, after);
+        var xhrMethod = this.getXHRMethod(method);
+        if (!/Proxied by Hijax/i.test(xhrMethod.toString())) {
+            nativeXHR[method] = xhrMethod;
+        }
+        var proxy = proxyFunction(nativeXHR[method], before, after);
         this.setXHRMethod(method, proxy);
     };
 
@@ -116,6 +134,14 @@
         }
 
         typeof callback === 'function' && callback();
+    };
+
+    Hijax.prototype.clearProxiedXHREvents = function() {
+        for (var method in nativeXHR) {
+            if (nativeXHR.hasOwnProperty(method)) {
+                this.setXHRMethod(method, nativeXHR[method]);
+            }
+        }
     };
 
     // Can be overridden by an adapter

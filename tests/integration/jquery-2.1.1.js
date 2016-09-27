@@ -2,17 +2,20 @@ define(['hijax', 'jquery211'],
 function(Hijax, jQuery) {
     describe('Hijax proxying tests  (jQuery 2.1.1)', function() {
         var foo;
-        var hijax = new Hijax();
+        var hijax;
 
-        hijax
-            .set('home', '/examples/response.json', {
-                receive: function(data, xhr) {
-                    foo = 'baz';
-                },
-                complete: function(data, xhr) {
-                    foo = 'complete';
-                }
-            });
+        before(function() {
+            hijax = new Hijax(null, true);
+            hijax
+                .set('jquery-2.1.1', '/examples/response.json', {
+                    receive: function(data, xhr) {
+                        foo = 'baz';
+                    },
+                    complete: function(data, xhr) {
+                        foo = 'complete';
+                    }
+                });
+        });
 
         it('proxies the AJAX request', function(done) {
             jQuery

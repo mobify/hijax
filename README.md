@@ -45,6 +45,16 @@ If an adapter is used, it should be passed to the constructor:
     var myAdapter = require('adapters/jquery.legacy');
     var hijax = new Hijax(myAdapter);
 
+Note that Hijax is a singleton, so if you initialize it more than once, you will still be getting the same instance back. If you need to clear the existing Hijax instance with a new one, pass `true` as the second parameter to the constructor.
+
+    // Eg:
+    var hijaxA = new Hijax();
+    var hijaxB = new Hijax();
+    // hijaxA == hijaxB
+
+    var hijaxC = new Hijax(null, true);
+    // hijaxA != hijaxC
+
 An XHR request can be proxied by calling the `set` method, and providing a name,
 url/truth function and the callbacks for the events to be proxied:
 
