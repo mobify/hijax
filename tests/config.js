@@ -8,6 +8,7 @@ require.config({
         'jquery132': 'bower_components/jquery132/jquery',
 
         'adapter': '../adapters/jquery.legacy',
+        'proxyWrapAdapter': '../adapters/proxy-wrap',
 
         'hijax': '../src/hijax',
         'hijacker': '../src/hijacker'
