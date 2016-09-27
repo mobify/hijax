@@ -12,7 +12,8 @@ require(['config'], function(){
             'tests/integration/jquery-1.3.2',
             'tests/integration/jquery-2.1.1',
 
-            'tests/integration/conditionParameter'
+            'tests/integration/conditionParameter',
+            'tests/integration/whitelistedDomains'
         ];
 
         require(tests, function() {
