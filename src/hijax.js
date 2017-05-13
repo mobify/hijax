@@ -50,6 +50,12 @@
     };
 
     function Hijax(adapter) {
+        if (Hijax.prototype._instance) {
+            return Hijax.prototype._instance;
+        }
+
+        Hijax.prototype._instance = this;
+
         this.proxies = {};
         this.adapter = adapter;
 
